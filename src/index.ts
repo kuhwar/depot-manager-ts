@@ -3,10 +3,10 @@ import publicRoutes from './routes/public.routes'
 import { engine } from 'express-handlebars'
 
 const app = express();
-app.engine('hbs', engine({defaultLayout: 'public'}));
+app.engine('hbs', engine({defaultLayout: 'public', extname:"hbs"}));
 app.set("view engine", "hbs");
 // Add Routes here
-app.set('views', './dist/views');
+// app.set('views', './dist/views');
 
 
 
