@@ -1,12 +1,13 @@
 {
   "name": "depot-manager-ts",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "tailwind:css": "postcss public/styles/tailwind.css -o public/styles/style.css"
+    "build:ts": "npx tsc",
+    "build:tw": "npx postcss public/styles/tailwind.css -o public/styles/style.css",
+    "build": "npm run build:ts && npm run build:tw",
+    "start:tw": "npx postcss public/styles/tailwind.css -o public/styles/style.css -w",
+    "start:ts": "npx ts-node-dev ./src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,13 +20,13 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/express-handlebars": "^5.3.1",
     "@types/handlebars": "^4.0.40",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.1.0",
-    "nodemon": "^3.1.9",
     "postcss": "^8.4.49",
     "postcss-cli": "^11.0.0",
-    "tailwindcss": "^3.4.16",
+    "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2"

@@ -16,5 +16,5 @@ app.use("/", publicRoutes)
 
 // Start server
 app.listen("8000", ()=>{
-  console.log("Express server listening on http://localhost:8000");
+  console.log("Express server listening on the http://localhost:8000");
 });
