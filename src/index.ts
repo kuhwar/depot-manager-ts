@@ -1,6 +1,8 @@
 import express from 'express';
 import publicRoutes from './routes/public.routes'
 import { engine } from 'express-handlebars'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const app = express();
 app.engine('hbs', engine({defaultLayout: 'public', extname:"hbs"}));
@@ -15,6 +17,6 @@ app.use(express.static('public'))
 app.use("/", publicRoutes)
 
 // Start server
-app.listen("8000", ()=>{
+app.listen(process.env.PORT, ()=>{
   console.log("Express server listening on the http://localhost:8000");
 });
