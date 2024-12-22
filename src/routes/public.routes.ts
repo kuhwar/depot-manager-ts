@@ -7,7 +7,7 @@ router.get('/', (req: Request, res: Response) => {
   res.render('home')
 })
 router.get('/hello-world', (req: Request, res: Response) => {
-  res.send('Hello World!')
+  res.render("home",{message:"Hello World"})
 })
 
 export = router

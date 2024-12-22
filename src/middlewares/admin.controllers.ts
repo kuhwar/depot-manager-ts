@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
 
-export const renderHome =  (req: Request, res: Response, next: NextFunction)  => {
-  res.render('home');
+export const adminHomeController =  (req: Request, res: Response, next: NextFunction)  => {
+  res.render('admin/home', {layout:'admin'});
+}
+
+export const viewProductController  =  (req: Request, res: Response, next: NextFunction)  => {
+  res.render('admin/view-product', {layout:'admin'});
 }

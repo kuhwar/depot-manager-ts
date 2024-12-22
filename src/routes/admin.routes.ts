@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { checkSession } from '../middlewares/authentication.middlewares'
-import { renderHome } from '../middlewares/admin.controllers'
+import { adminHomeController } from '../middlewares/admin.controllers'
 
 const router = Router();
 
-router.get('/', checkSession, renderHome)
+router.get('/', checkSession, adminHomeController)
+router.get('/products/:id', checkSession, adminHomeController)
 
 export = router
