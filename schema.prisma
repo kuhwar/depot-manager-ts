@@ -7,20 +7,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
+model Category {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false)
 
-  email        String @unique
-  displayName  String @map("display_name")
-  profilePhoto String @map("profile_photo")
+  name    String
+  Product Product[]
 
-  depot   Depot @relation(fields: [depotId], references: [id])
-  depotId Int   @map("depot_id")
-
-  @@map("users")
+  @@map("categories")
 }
 
 model Depot {
@@ -33,10 +29,11 @@ model Depot {
   logo        String
   adminPath   String @default("/admin-dashboard") @map("admin_path")
 
-  hosts Host[]
-  users User[]
-  Shelf Shelf[]
-  Post  Post[]
+  hosts   Host[]
+  users   User[]
+  shelves Shelf[]
+  posts   Post[]
+  items   Item[]
 
   @@map("depots")
 }
@@ -55,20 +52,23 @@ model Host {
   @@map("hosts")
 }
 
-model Shelf {
+model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false)
 
-  name    String
-  depot   Depot  @relation(fields: [depotId], references: [id])
-  depotId Int    @map("depot_id")
+  email        String @unique
+  displayName  String @map("display_name")
+  profilePhoto String @map("profile_photo")
 
-  @@map("shelves")
+  depot   Depot @relation(fields: [depotId], references: [id])
+  depotId Int   @map("depot_id")
+
+  @@map("users")
 }
 
-model Category {
+model Shelf {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -76,7 +76,12 @@ model Category {
 
   name String
 
-  @@map("categories")
+  depot   Depot @relation(fields: [depotId], references: [id])
+  depotId Int   @map("depot_id")
+
+  items Item[]
+
+  @@map("shelves")
 }
 
 model Product {
@@ -85,13 +90,42 @@ model Product {
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false)
 
-  name    String
-  upc     String
-  visuals Json
-  price   Decimal @db.Decimal(10, 2)
-  Post    Post[]
+  name        String
+  upc         String
+  visuals     Json
+  price       Decimal @db.Decimal(10, 2)
+  description String
+  walmartId   String?
 
+  // Foreign Keeys
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  // Child items
+  posts Post[]
+  items Item[]
+
+  @@index([categoryId])
   @@map("products")
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
+
+  soldAt DateTime? @map("sold_at")
+
+  // Foreign Keeys
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @map("product_id")
+  shelf     Shelf   @relation(fields: [shelfId], references: [id])
+  shelfId   Int     @map("shelf_id")
+  depot     Depot   @relation(fields: [depotId], references: [id])
+  depotId   Int     @map("depot_id")
+
+  @@map("items")
 }
 
 model Post {
@@ -100,7 +134,9 @@ model Post {
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false)
 
-  isActive  Boolean @default(true)
+  isActive Boolean @default(true)
+
+  // Foreign Keeys
   product   Product @relation(fields: [productId], references: [id])
   productId Int     @map("product_id")
   depot     Depot   @relation(fields: [depotId], references: [id])
