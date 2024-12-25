@@ -12,9 +12,9 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  email        String  @unique
+  email        String @unique
   displayName  String @map("display_name")
-  profilePhoto String  @map("profile_photo")
+  profilePhoto String @map("profile_photo")
 
   depot   Depot @relation(fields: [depotId], references: [id])
   depotId Int   @map("depot_id")
@@ -29,23 +29,39 @@ model Depot {
 
   displayName String @map("display_name")
   logo        String
-  adminPath   String @map("admin_path") @default("/admin-dashboard")
+  adminPath   String @default("/admin-dashboard") @map("admin_path")
 
-  Site DepotHost[]
-  User User[]
+  hosts Host[]
+  users User[]
 
   @@map("depots")
 }
 
-model DepotHost {
+model Host {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  host String @unique @map("host")
+  name String @unique
 
   depot   Depot @relation(fields: [depotId], references: [id])
   depotId Int   @map("depot_id")
 
-  @@map("depot_hosts")
+  @@map("hosts")
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("posts")
 }

@@ -3,4 +3,4 @@ dist
 node_modules
 *.env
 data
-/public/styles/style.css
+public/styles/style.css

@@ -1,19 +1,20 @@
 {
   "name": "depot-manager-ts",
   "version": "1.0.0",
+  "description": "",
+  "author": "",
   "main": "dist/index.js",
+  "keywords": [],
+  "license": "ISC",
   "scripts": {
     "build:tw": "npx postcss tailwind.css -o public/styles/style.css",
     "build:ts": "npx tsc",
     "build": "npm run build:ts && npm run build:tw && node dist/index.js",
     "start:tw": "npx postcss tailwind.css -o public/styles/style.css -w",
-    "start:ts": "npx ts-node-dev ./src/index.ts"
+    "start:ts": "npx ts-node-dev ./src/index.ts",
+    "prisma:deploy": "npx prisma migrate deploy",
+    "prisma:create": "npx prisma migrate dev --create-only"
   },
-  "keywords": [],
-  "author": "",
-  "prisma.schema": "src/configurations/schema.prisma",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@prisma/client": "^6.1.0",
     "dotenv": "^16.4.7",
@@ -41,5 +42,9 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2"
+  },
+  "prisma": {
+    "schema": "schema.prisma",
+    "seed": "ts-node seeds"
   }
 }
