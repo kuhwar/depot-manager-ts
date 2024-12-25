@@ -29,7 +29,7 @@ async function main () {
     }
   })
 
-  const defaultCategories = await prisma.category.createMany({
+  await prisma.category.createMany({
     data: [
       { name: 'Not Categorized' },
       { name: 'Appliances' },
@@ -55,6 +55,10 @@ async function main () {
     ]
   })
 
+  const defaultCategory = await prisma.category.findUnique({where:{id:1}})
+
+  console.log(defaultCategory)
+
   const product = await prisma.product.create({
     data: {
       description: 'a short product description',
@@ -62,7 +66,7 @@ async function main () {
       upc: '1234568790123',
       visuals: ['/default-product.png'],
       price: 20.00,
-      category: { connect: defaultCategories[0] },
+      category: { connect: defaultCategory },
       items: {
         create: [{
           depot: { connect: localDepot },
