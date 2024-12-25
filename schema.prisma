@@ -11,6 +11,7 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
 
   email        String @unique
   displayName  String @map("display_name")
@@ -26,6 +27,7 @@ model Depot {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
 
   displayName String @map("display_name")
   logo        String
@@ -33,6 +35,8 @@ model Depot {
 
   hosts Host[]
   users User[]
+  Shelf Shelf[]
+  Post  Post[]
 
   @@map("depots")
 }
@@ -41,6 +45,7 @@ model Host {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
 
   name String @unique
 
@@ -50,18 +55,56 @@ model Host {
   @@map("hosts")
 }
 
+model Shelf {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
+
+  name    String
+  depot   Depot  @relation(fields: [depotId], references: [id])
+  depotId Int    @map("depot_id")
+
+  @@map("shelves")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
+
+  name String
+
+  @@map("categories")
+}
+
 model Product {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
+
+  name    String
+  upc     String
+  visuals Json
+  price   Decimal @db.Decimal(10, 2)
+  Post    Post[]
 
   @@map("products")
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int      @id @unique()
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false)
+
+  isActive  Boolean @default(true)
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @map("product_id")
+  depot     Depot   @relation(fields: [depotId], references: [id])
+  depotId   Int     @map("depot_id")
 
   @@map("posts")
 }
