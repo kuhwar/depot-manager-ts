@@ -18,5 +18,9 @@ export const populateDepotConfiguration = async (req: Request, res: Response, ne
 }
 
 export const homeController =  async (req: Request, res: Response) => {
+  res.locals.products = await prisma.product.findMany({
+    include: {items:{where:{isDeleted:false}}},
+    take:12
+  })
   return res.render('home')
 }

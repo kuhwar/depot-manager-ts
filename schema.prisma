@@ -93,7 +93,7 @@ model Product {
   name        String
   upc         String
   visuals     Json
-  price       Decimal @db.Decimal(10, 2)
+  price       Float
   description String
   walmartId   String?
 

@@ -16,22 +16,35 @@ async function main () {
       },
       shelves: {
         create: [
-          {name:"Shelf A"},
-          {name:"Shelf B"},
-          {name:"Shelf C"},
-          {name:"Shelf D"},
-          {name:"Shelf E"},
-          {name:"Shelf F"},
-          {name:"Shelf G"},
-          {name:"Shelf H"},
+          { name: 'Shelf A' },
+          { name: 'Shelf B' },
+          { name: 'Shelf C' },
+          { name: 'Shelf D' },
+          { name: 'Shelf E' },
+          { name: 'Shelf F' },
+          { name: 'Shelf G' },
+          { name: 'Shelf H' },
         ]
       }
+    },
+    include: { shelves: true },
+  })
+
+  console.log(localDepot)
+
+  const product = await prisma.product.create({
+    data: {
+      description: 'a short product description',
+      name: 'Sample Product',
+      upc: '1234568790123',
+      visuals: ['/default-product.png'],
+      price: 20.00,
+      category: { create: { name: 'Not Categorized' } }
     }
   })
 
   await prisma.category.createMany({
     data: [
-      { name: 'Not Categorized' },
       { name: 'Appliances' },
       { name: 'Bed Room Furniture' },
       { name: 'Dining Room Furniture' },
@@ -54,34 +67,6 @@ async function main () {
       { name: 'Arts & Crafts' },
     ]
   })
-
-  const defaultCategory = await prisma.category.findUnique({where:{id:1}})
-
-  console.log(defaultCategory)
-
-  const product = await prisma.product.create({
-    data: {
-      description: 'a short product description',
-      name: 'Sample Product',
-      upc: '1234568790123',
-      visuals: ['/default-product.png'],
-      price: 20.00,
-      category: { connect: defaultCategory },
-      items: {
-        create: [{
-          depot: { connect: localDepot },
-          shelf: {
-            create: {
-              name: '01-A',
-              depot: { connect: localDepot }
-            }
-          }
-        }]
-      }
-    }
-  })
-
-  console.log({ localDepot })
 }
 
 main()
