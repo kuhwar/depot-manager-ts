@@ -9,11 +9,11 @@ import authenticationRoutes from './routes/authentication.routes'
 import adminRoutes from './routes/admin.routes'
 
 import passport from './configurations/passport';
-import { engine } from 'express-handlebars'
+import handlebars from "./configurations/handlebars";
 import {renderNotFound, validateHost} from "./middlewares/global.middlewares";
 
 const app = express();
-app.engine('hbs', engine({defaultLayout: 'public', extname:"hbs"}));
+app.engine('hbs', handlebars.engine);
 app.set("view engine", "hbs");
 
 app.use(express.static('public'))

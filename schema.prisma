@@ -11,7 +11,7 @@ model Category {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   name    String
   Product Product[]
@@ -23,7 +23,7 @@ model Depot {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   displayName String @map("display_name")
   logo        String
@@ -42,7 +42,7 @@ model Host {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   name String @unique
 
@@ -56,7 +56,7 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   email        String @unique
   displayName  String @map("display_name")
@@ -72,7 +72,7 @@ model Shelf {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   name String
 
@@ -88,14 +88,15 @@ model Product {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
-  name        String
-  upc         String
-  visuals     Json
-  price       Float
-  description String
-  walmartId   String?
+  name           String
+  upc            String
+  visuals        Json
+  price          Float
+  description    String
+  variationLabel String? @map("variation_label")
+  walmartId      String? @map("walmart_id")
 
   // Foreign Keeys
   category   Category @relation(fields: [categoryId], references: [id])
@@ -113,7 +114,7 @@ model Item {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   soldAt DateTime? @map("sold_at")
 
@@ -132,7 +133,7 @@ model Post {
   id        Int      @id @unique()
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  isDeleted Boolean  @default(false)
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   isActive Boolean @default(true)
 

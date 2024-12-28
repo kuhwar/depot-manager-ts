@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import prisma from '../configurations/prisma'
 
 export const homeController =  async (req: Request, res: Response) => {
@@ -20,5 +20,6 @@ export const viewProductController =  async (req: Request, res: Response) => {
   if(!product){
     return res.status(404).render("404",{layout:false})
   }
+  res.locals.product = product
   return res.render('view-product')
 }

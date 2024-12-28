@@ -1,9 +1,9 @@
-import {Router, Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction} from 'express';
 import passport from "passport";
 
 
 export const loginContoller = (req: Request, res: Response) => {
-  res.render("login", {layout: "auth"})
+  res.render("auth/login", {layout: "auth"})
 }
 export const logoutContoller = (req: Request, res: Response) => {
   // req.logout();
