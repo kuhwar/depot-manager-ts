@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express'
-import { homeController, populateDepotConfiguration } from '../middlewares/public.controllers'
+import {homeController, viewProductController} from '../middlewares/public.controllers'
 
 const router = Router()
 
 
 
-router.get('/', populateDepotConfiguration, homeController)
+router.get('/', homeController)
+router.get('/p/:id', viewProductController)
 
 export = router

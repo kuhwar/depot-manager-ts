@@ -9,6 +9,7 @@ export const logoutContoller = (req: Request, res: Response) => {
   // req.logout();
   req.session.destroy(() => res.redirect('/auth/login'));
 }
+
 export const checkSession = (req: Request, res: Response, next: NextFunction) => {
   if (req.user) {
     return next();
