@@ -95,17 +95,17 @@ model Product {
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
 
-  name           String
+  name           String  @db.VarChar(99)
   upc            String
   visuals        Json
   price          Float
-  description    String
+  description    String  @db.Text
   variationLabel String? @map("variation_label")
   walmartId      String? @map("walmart_id")
 
   // Foreign Keeys
   category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
+  categoryId Int      @map("category_id")
 
   // Child items
   posts Post[]
@@ -139,8 +139,6 @@ model Post {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
-
-  isActive Boolean @default(true)
 
   // Foreign Keeys
   product   Product @relation(fields: [productId], references: [id])

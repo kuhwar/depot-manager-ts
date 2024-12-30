@@ -2,10 +2,10 @@ import { Request, Response } from 'express'
 import prisma from '../configurations/prisma'
 
 export const homeController =  async (req: Request, res: Response) => {
-  console.log("checking products to display")
   res.locals.products = await prisma.product.findMany({
+    where: {items:{some:{isDeleted:false, depotId: res.locals.depot.i8}}},
     include: {items:{where:{isDeleted:false}}},
-    take:12
+    take:30
   })
   return res.render('home')
 }

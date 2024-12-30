@@ -3,7 +3,7 @@ CREATE TABLE `categories` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `name` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -14,7 +14,7 @@ CREATE TABLE `depots` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `display_name` VARCHAR(191) NOT NULL,
     `logo` VARCHAR(191) NOT NULL,
     `admin_path` VARCHAR(191) NOT NULL DEFAULT '/admin-dashboard',
@@ -27,7 +27,7 @@ CREATE TABLE `hosts` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `name` VARCHAR(191) NOT NULL,
     `depot_id` INTEGER NOT NULL,
 
@@ -40,7 +40,7 @@ CREATE TABLE `users` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `email` VARCHAR(191) NOT NULL,
     `display_name` VARCHAR(191) NOT NULL,
     `profile_photo` VARCHAR(191) NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE `shelves` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `name` VARCHAR(191) NOT NULL,
     `depot_id` INTEGER NOT NULL,
 
@@ -67,16 +67,17 @@ CREATE TABLE `products` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `name` VARCHAR(191) NOT NULL,
     `upc` VARCHAR(191) NOT NULL,
     `visuals` JSON NOT NULL,
-    `price` DECIMAL(10, 2) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
-    `walmartId` VARCHAR(191) NULL,
-    `categoryId` INTEGER NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `description` TEXT NOT NULL,
+    `variation_label` VARCHAR(191) NULL,
+    `walmart_id` VARCHAR(191) NULL,
+    `category_id` INTEGER NOT NULL,
 
-    INDEX `products_categoryId_idx`(`categoryId`),
+    INDEX `products_category_id_idx`(`category_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -85,7 +86,7 @@ CREATE TABLE `items` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `sold_at` DATETIME(3) NULL,
     `product_id` INTEGER NOT NULL,
     `shelf_id` INTEGER NOT NULL,
@@ -99,8 +100,7 @@ CREATE TABLE `posts` (
     `id` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
-    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `product_id` INTEGER NOT NULL,
     `depot_id` INTEGER NOT NULL,
 
@@ -118,7 +118,7 @@ ALTER TABLE `users` ADD CONSTRAINT `users_depot_id_fkey` FOREIGN KEY (`depot_id`
 ALTER TABLE `shelves` ADD CONSTRAINT `shelves_depot_id_fkey` FOREIGN KEY (`depot_id`) REFERENCES `depots`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `products_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `categories`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `products` ADD CONSTRAINT `products_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `items` ADD CONSTRAINT `items_product_id_fkey` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

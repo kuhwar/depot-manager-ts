@@ -5,9 +5,11 @@
   <title>Example App</title>
   <link href="/styles/style.css" type="text/css" rel="stylesheet"/>
 </head>
-<body class="flex justify-center overflow-hidden dark:border-gray-800 bg-gray-100 border border-gray-100 rounded-2xl dark:bg-gray-900">
-{{> side }}
-<main class="min-h-screen flex flex-col items-center justify-center w-full">
+<body class="flex items-stretch h-screen text-gray-700  dark:text-gray-300 bg-gray-100 dark:bg-gray-900 ">
+<menu class="basis-64 flex-none py-4 px-4 overflow-y-auto no-scrollbar border-e-2 border-gray-600" >
+  {{>side}}
+</menu>
+<main class="flex-1 py-4 px-4 overflow-y-scroll h-full no-scrollbar">
   {{{body}}}
 </main>
 </body>
