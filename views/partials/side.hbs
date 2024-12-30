@@ -69,9 +69,7 @@
     <div class="mt-6">
       <div class="flex items-center justify-between mt-6">
         <a href="#" class="flex items-center gap-x-2">
-          {{#each user.photos}}
-            <img class="object-cover rounded-full h-7 w-7" src="{{this.value}}" alt="avatar" />
-          {{/each}}
+          <img class="object-cover rounded-full h-7 w-7" src="{{user.photos.[0].value}}" alt="avatar" />
           <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{user.displayName}}</span>
         </a>
 

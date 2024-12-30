@@ -58,13 +58,16 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
 
-  email        String @unique
-  displayName  String @map("display_name")
-  profilePhoto String @map("profile_photo")
+  email        String
+  displayName  String   @map("display_name")
+  profilePhoto String   @map("profile_photo")
+  lastLoginAt  DateTime @default(now()) @map("last_login_at")
+  lastLoginIp  String   @default("0.0.0.0") @map("last_login_ip")
 
   depot   Depot @relation(fields: [depotId], references: [id])
   depotId Int   @map("depot_id")
 
+  @@unique([email, depotId])
   @@map("users")
 }
 
@@ -76,9 +79,11 @@ model Shelf {
 
   name String
 
+  // Foreign Keys
   depot   Depot @relation(fields: [depotId], references: [id])
   depotId Int   @map("depot_id")
 
+  // Child items
   items Item[]
 
   @@map("shelves")
