@@ -11,10 +11,10 @@
             </h3>
             {{this.variationLabel}}
             {{#if this.variationLabel}}
-              <p class="mt-1 text-sm text-gray-500">{{product.variationLabel}}</p>
+              <p class="mt-1 text-sm text-gray-500">{{this.variationLabel}}</p>
             {{/if}}
           </div>
-          <p class="text-sm font-medium text-gray-900">$35</p>
+          <p class="text-sm font-medium text-gray-900">{{currency this.price }}</p>
         </div>
       </div>
     {{/each}}

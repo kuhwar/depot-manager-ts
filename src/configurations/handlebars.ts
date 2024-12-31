@@ -5,7 +5,7 @@ export = create({
   extname: "hbs",
   helpers: {
     currency: (amount: number) => {
-      return Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 2}).format(amount)
+      return Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 0}).format(amount)
     }
   }
 })
