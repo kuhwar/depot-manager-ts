@@ -14,6 +14,13 @@ async function main () {
           { name: '127.0.0.1' },
         ]
       },
+      users: {
+        create: [{
+          displayName: 'Harun Daloglu',
+          profilePhoto: '/default-profile.jpg',
+          email: 'harund@gmail.com'
+        }]
+      },
       shelves: {
         create: [
           { name: 'Shelf A' },
@@ -30,21 +37,10 @@ async function main () {
     include: { shelves: true },
   })
 
-  console.log(localDepot)
-
-  const product = await prisma.product.create({
-    data: {
-      description: 'a short product description',
-      name: 'Sample Product',
-      upc: '1234568790123',
-      visuals: ['/default-product.png'],
-      price: 20.00,
-      category: { create: { name: 'Not Categorized' } }
-    }
-  })
 
   await prisma.category.createMany({
     data: [
+      { name: 'Not Categorized' },
       { name: 'Appliances' },
       { name: 'Bed Room Furniture' },
       { name: 'Dining Room Furniture' },

@@ -3,7 +3,7 @@ import prisma from '../configurations/prisma'
 
 export const homeController =  async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
-    where: {items:{some:{isDeleted:false, depotId: res.locals.depot.i8}}},
+    where: {depotId: res.locals.depot.id, items:{some:{isDeleted:false}}},
     include: {items:{where:{isDeleted:false}}},
     take:30
   })

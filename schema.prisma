@@ -29,11 +29,11 @@ model Depot {
   logo        String
   adminPath   String @default("/admin-dashboard") @map("admin_path")
 
-  hosts   Host[]
-  users   User[]
-  shelves Shelf[]
-  posts   Post[]
-  items   Item[]
+  hosts    Host[]
+  users    User[]
+  shelves  Shelf[]
+  posts    Post[]
+  products Product[]
 
   @@map("depots")
 }
@@ -99,6 +99,7 @@ model Product {
   upc            String
   visuals        Json
   price          Float
+  // https://www.npmjs.com/package/html-to-text-conv
   description    String  @db.Text
   variationLabel String? @map("variation_label")
   walmartId      String? @map("walmart_id")
@@ -106,6 +107,8 @@ model Product {
   // Foreign Keeys
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int      @map("category_id")
+  depot      Depot    @relation(fields: [depotId], references: [id])
+  depotId    Int      @map("depot_id")
 
   // Child items
   posts Post[]
@@ -128,8 +131,6 @@ model Item {
   productId Int     @map("product_id")
   shelf     Shelf   @relation(fields: [shelfId], references: [id])
   shelfId   Int     @map("shelf_id")
-  depot     Depot   @relation(fields: [depotId], references: [id])
-  depotId   Int     @map("depot_id")
 
   @@map("items")
 }
