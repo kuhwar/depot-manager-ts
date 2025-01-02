@@ -3,26 +3,25 @@
     <h2 class="text-lg font-medium text-gray-800 dark:text-white">Catalog</h2>
     <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">240 vendors</span>
 
-    <button
+    <a href="/admin/products/new"
       class="flex items-center justify-center px-5 py-2 ms-auto text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
       <span>Add Product</span>
-    </button>
+    </a>
   </div>
   <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
     {{#each products}}
-        <a class="relative p-2 overflow-hidden rounded-md flex flex-col gap-2 border-2 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 hover:opacity-90 hover:-top-1 hover:-left-1 hover:shadow-md hover:dark:shadow-gray-200" href="/admin/catalog/{{id}}">
-          <img class="rounded-t-md object-cover aspect-square" alt="{{name}}" src="{{visuals.[0]}}"/>
+        <a class="relative p-2 overflow-hidden rounded-md flex flex-col gap-2 border-2 dark:border-gray-700 bg-gray-200 dark:bg-gray-800" href="/admin/catalog/{{id}}">
+          <img class="rounded-t-md object-cover aspect-square" alt="{{name}}" src="{{visuals.[0]}}?odnHeight=180&odnWidth=180&odnBg=ffffff"/>
           <span class="text-sm px-2 flex-1 line-clamp-2">{{name}}</span>
           <div class="flex items-center gap-x-2">
-            <p class="px-2 py-1 text-xs text-slate-100 rounded-lg bg-orange-900">{{id}}</p>
+            <p class="px-2 py-1 text-xs text-slate-100 rounded-lg bg-orange-900">{{currency price}}</p>
             {{#each items}}
               <p class="px-2 py-1 text-xs border-[1px] rounded-lg border-gray-500 ">{{shelf.name}}</p>
             {{/each}}
           </div>
-
         </a>
     {{/each}}
   </div>
