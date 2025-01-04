@@ -4,7 +4,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
 }
 
 model Category {
@@ -115,6 +116,7 @@ model Product {
   items Item[]
 
   @@index([categoryId])
+  @@fulltext([name])
   @@map("products")
 }
 

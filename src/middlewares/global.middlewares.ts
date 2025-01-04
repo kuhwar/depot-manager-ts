@@ -77,14 +77,13 @@ export const walmartLookupByUpc = async (req: Request, res: Response, next :Next
   }
 }}
 
-export const renderNotFound = (req: Request, res: Response, next: NextFunction) => {
+export const renderNotFound = (req: Request, res: Response) => {
   if (req.accepts("text/html")) {
     res.status(404).render("404", {layout: false})
   } else {
     res.status(404).send({})
   }
 }
-
 
 const getWalmartHeaders = () =>{
   const walmartConsumerId = process.env.WM_CONSUMER_ID
@@ -101,6 +100,31 @@ const getWalmartHeaders = () =>{
     "WM_SEC.AUTH_SIGNATURE": signature,
     "WM_CONSUMER.INTIMESTAMP": time,
     "WM_SEC.KEY_VERSION": walmartKeyVersion,
+  }
+}
+
+export const populatePagination = (req: Request, res: Response, next :NextFunction) => {
+  try{
+    const q= typeof req.query.q === "string" && req.query.q !== "" ? req.query.q : undefined
+    const skip= (typeof req.query.skip === "string" && parseInt(req.query.skip) > 1) ? parseInt(req.query.skip) : 0
+    const take= (typeof req.query.count === "string" && parseInt(req.query.count) > 1) ? parseInt(req.query.count) : 12
+    const orderBy= typeof req.query.orderBy === "string" ? req.query.orderBy : ""
+    const orderDirection= typeof  req.query.orderDirection === "string" && req.query.orderDirection === "desc" ? "desc" : "asc"
+    const previousSkip = skip - take < 0 ? 0 :skip - take
+    const nextSkip = skip + take
+    res.locals.pageData = {
+      q: q,
+      skip: skip,
+      take: take,
+      orderBy: orderBy,
+      orderDirection: orderDirection,
+      previousSkip: previousSkip,
+      nextSkip: nextSkip
+    }
+  } catch (e: any) {
+    res.locals.errors.push(e.response?.data ?? e.message)
+  } finally {
+    next()
   }
 }
 
