@@ -45,14 +45,18 @@ export const walmartLookupById = async (req: Request, res: Response, next :NextF
 
 export const walmartLookupByQuery = async (req: Request, res: Response, next :NextFunction) => {{
   try{
-    if (!req.query.q || typeof req.query.q !== "string" || req.query.q === "" ) return;
+    if (!res.locals.pageData.q || typeof res.locals.pageData.q !== "string" || res.locals.pageData.q === "" ) return;
     const walmartRequestHeaders = getWalmartHeaders()
     const filters: string[] = []
-    filters.push(`query=${encodeURIComponent(req.query.q)}`)
-    filters.push(`numItems=${encodeURIComponent(12)}`)
+    filters.push(`query=${encodeURIComponent(res.locals.pageData.q)}`)
+    filters.push(`numItems=${encodeURIComponent(res.locals.pageData.take)}`)
+    if(res.locals.pageData.skip){
+      filters.push(`start=${encodeURIComponent(res.locals.pageData.skip)}`)
+    }
     const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?' + filters.join("&")
     const apiResponse = await axios.get(url, { headers: walmartRequestHeaders })
-    res.locals.walmartProducts = apiResponse.data.items
+    res.locals.walmartProducts = apiResponse.data.items.map(normalizeWalmartProduct)
+    res.locals.pageData.hasNext = Math.min(1000, apiResponse.data.totalResults) > (apiResponse.data.start + apiResponse.data.numItems)
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)
   } finally {
@@ -129,5 +133,17 @@ export const populatePagination = (req: Request, res: Response, next :NextFuncti
 }
 
 const normalizeWalmartProduct = (walmartProduct:any)=> {
-  return walmartProduct;
+  const visuals = new Set<string>()
+  visuals.add(walmartProduct.largeImage.replace(/\?.*$/, ""))
+  walmartProduct.imageEntities.forEach((image: any) => visuals.add(image.largeImage.replace(/\?.*$/, "")))
+
+  return {
+    name: walmartProduct.name,
+    upc: walmartProduct.upc,
+    visuals: Array.from(visuals),
+    price: walmartProduct.salePrice,
+    description: walmartProduct.shortDescription,
+    variationLabel: (walmartProduct.size + " " + walmartProduct.color).trim(),
+    walmartId: walmartProduct.itemId,
+  }
 }

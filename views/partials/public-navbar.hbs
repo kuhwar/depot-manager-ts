@@ -4,41 +4,8 @@
     <div class="py-2 transition-colors duration-300 transform rounded-lg  md:mx-2 text-nowrap overflow-hidden">{{depot.displayName}}</div>
   </a>
   {{#if pageData}}
-    <form class="ms-auto" method="get">
-      <button {{#unless pageData.skip}}DISABLED{{/unless}} name="skip" value="{{pageData.previousSkip}}"
-              class="p-2  text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" fill="currentColor">
-          <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
-        </svg>
-      </button>
-      <input type="hidden" name="q" value="{{pageData.q}}"/>
-    </form>
-    <form class="relative" method="get">
-      <label for="qInput" class="absolute inset-y-0 left-0 flex items-center p-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" fill="currentColor">
-          <path
-            d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
-        </svg>
-      </label>
-      <input id="qInput" type="text" name="q" value="{{pageData.q}}" placeholder="Search"
-             class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300">
-      <input type="submit" hidden/>
-      {{#if pageData.q}}
-        <a href="?" class="absolute inset-y-0 right-0 p-3 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" fill="currentColor">
-            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
-          </svg>
-        </a>
-      {{/if}}
-    </form>
-    <form method="get">
-      <input type="hidden" name="q" value="{{pageData.q}}"/>
-      <button {{#unless pageData.hasNext}}DISABLED{{/unless}}  name="skip" value="{{pageData.nextSkip}}"
-              class="p-2  text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" fill="currentColor">
-          <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
-        </svg>
-      </button>
-    </form>
+    <div class="ms-auto">
+      {{>paginate}}
+    </div>
   {{/if}}
 </div>
