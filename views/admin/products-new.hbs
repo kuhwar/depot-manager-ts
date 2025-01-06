@@ -22,13 +22,13 @@
   <form action="" method="post" class="flex flex-col gap-4">
     <div class="flex gap-4 items-center ">
       <label class="text-right w-32 p-2 flex-none" for="inpProductName">Name:</label>
-      <input id="inpProductName" type="text" placeholder="Enter Name" name="name" value="{{walmartProduct.name}}"
-      class=" flex-1 p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring"/>
+      <input id="inpProductName" type="text" placeholder="Enter Name" name="name" value="{{walmartProduct.name}}" pattern="^.{3,100}$" required
+      class=" flex-1 p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring invalid:border-red-500"/>
     </div>
     <div class="flex gap-4 items-baseline ">
-      <label class="text-right w-32 p-2 flex-none" for="inpProductName">Description:</label>
+      <label class="text-right w-32 p-2 flex-none" for="inpProductDescription">Description:</label>
       <textarea class=" flex-1 p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring"
-                id="inpProductName" type="text" placeholder="Enter Name" name="name">{{walmartProduct.description}}</textarea>
+                id="inpProductDescription" type="text" placeholder="Enter Name" name="name">{{walmartProduct.description}}</textarea>
     </div>
   </form>
 </div>
