@@ -29,13 +29,14 @@ export const validateHost = async (req: Request, res: Response, next: NextFuncti
 export const walmartLookupById = async (req: Request, res: Response, next :NextFunction) => {{
   try{
     if (!req.query.walmartId  || typeof req.query.walmartId !== "string") return;
-    if(!/^\d*$/.test(req.query.walmartId)) return res.locals.errors.push("invalid walmartId: "+req.query.walmartId)
+    if(!/^\d{4,11}$/.test(req.query.walmartId)) return res.locals.errors.push("invalid walmartId: "+req.query.walmartId)
     const walmartRequestHeaders = getWalmartHeaders()
     const filters: string[] = []
     filters.push(`ids=${encodeURIComponent(req.query.walmartId)}`)
     const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?' + filters.join("&")
     const apiResponse = await axios.get(url, { headers: walmartRequestHeaders })
-    res.locals.walmartProducts = apiResponse.data
+    if(!Array.isArray(apiResponse.data.items) || apiResponse.data.items.length !== 1) return res.locals.errors.push("No or multiple items found in response: ", JSON.stringify(apiResponse.data))
+    res.locals.walmartProduct = normalizeWalmartProduct(apiResponse.data.items[0])
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)
   } finally {
@@ -135,7 +136,7 @@ export const populatePagination = (req: Request, res: Response, next :NextFuncti
 const normalizeWalmartProduct = (walmartProduct:any)=> {
   const visuals = new Set<string>()
   visuals.add(walmartProduct.largeImage.replace(/\?.*$/, ""))
-  walmartProduct.imageEntities.forEach((image: any) => visuals.add(image.largeImage.replace(/\?.*$/, "")))
+  walmartProduct.imageEntities.forEach((image: any) => visuals.add((image.largeImage??image.swatchImageSmall).replace(/\?.*$/, "")))
 
   return {
     name: walmartProduct.name,
