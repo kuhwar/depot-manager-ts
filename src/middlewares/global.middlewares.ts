@@ -5,28 +5,34 @@ import crypto from 'crypto'
 import axios from 'axios'
 
 const hostCacheExpirationSeconds = parseInt(process.env.HOST_CACHE_EXPIRATION_SECONDS ?? "1800")
-type HostCacheItem = { cachedAt: Date, depot: Depot | undefined}
+// Note to future myself: We can migrate this host cache to REDIS
+type HostCacheItem = { expiresAt: number, depot: Depot | undefined}
 const hostCache: Map<string, HostCacheItem> = new Map<string, HostCacheItem>()
 
 export const validateHost = async (req: Request, res: Response, next: NextFunction) => {
-  res.locals.errors = []
-  const hostName = req.hostname
+  try{
+    res.locals.errors = []
+    const hostName = req.hostname
+    let currentHost = hostCache.get(hostName)
 
-  const currentHostInformationFromCache = hostCache.get(hostName)
-  if (currentHostInformationFromCache && ((Date.now() - currentHostInformationFromCache.cachedAt.getTime()) < (hostCacheExpirationSeconds * 1000))) {
-    res.locals.depot = currentHostInformationFromCache.depot
-    return next()
+    if(!currentHost || currentHost.expiresAt < Date.now()){
+      const freshHostInformationFromDb = await prisma.host.findUnique({where: {name: hostName}, include: {depot: true}})
+      currentHost = {expiresAt: Date.now() + (hostCacheExpirationSeconds * 1000), depot: freshHostInformationFromDb?.depot}
+      hostCache.set(hostName, currentHost)
+    }
+
+    if (!currentHost.depot){
+      throw new Error(hostName+" does not exist")
+    }
+    res.locals.depot = currentHost.depot
+    next()
+  } catch (e: any) {
+    res.locals.errors.push(e.message)
+    return res.status(404).render("404", {layout: false})
   }
-  const freshDepotInformationFromDb = await prisma.host.findUnique({where: {name: hostName}, include: {depot: true}})
-  if(freshDepotInformationFromDb && freshDepotInformationFromDb.depot){
-    hostCache.set(hostName, {cachedAt: new Date(), depot: freshDepotInformationFromDb.depot})
-    res.locals.depot = freshDepotInformationFromDb.depot
-    return next()
-  }
-  return res.status(404).render("404", {layout: false})
 }
 
-export const walmartLookupById = async (req: Request, res: Response, next :NextFunction) => {{
+export const walmartLookupById = async (req: Request, res: Response, next :NextFunction) => {
   try{
     if (!req.query.walmartId  || typeof req.query.walmartId !== "string") return;
     if(!/^\d{4,11}$/.test(req.query.walmartId)) return res.locals.errors.push("invalid walmartId: "+req.query.walmartId)
@@ -42,9 +48,9 @@ export const walmartLookupById = async (req: Request, res: Response, next :NextF
   } finally {
     next()
   }
-}}
+}
 
-export const walmartLookupByQuery = async (req: Request, res: Response, next :NextFunction) => {{
+export const walmartLookupByQuery = async (req: Request, res: Response, next :NextFunction) => {
   try{
     if (!res.locals.pageData.q || typeof res.locals.pageData.q !== "string" || res.locals.pageData.q === "" ) return;
     const walmartRequestHeaders = getWalmartHeaders()
@@ -63,9 +69,9 @@ export const walmartLookupByQuery = async (req: Request, res: Response, next :Ne
   } finally {
     next()
   }
-}}
+}
 
-export const walmartLookupByUpc = async (req: Request, res: Response, next :NextFunction) => {{
+export const walmartLookupByUpc = async (req: Request, res: Response, next :NextFunction) => {
   try{
     if (!req.query.upc || typeof req.query.upc !== "string" ) return;
     if(/^\d*$/.test(req.query.upc)) return res.locals.errors.push("invalid upc: "+req.query.walmartId)
@@ -79,32 +85,6 @@ export const walmartLookupByUpc = async (req: Request, res: Response, next :Next
     res.locals.errors.push(e.response?.data ?? e.message)
   } finally {
     next()
-  }
-}}
-
-export const renderNotFound = (req: Request, res: Response) => {
-  if (req.accepts("text/html")) {
-    res.status(404).render("404", {layout: false})
-  } else {
-    res.status(404).send({})
-  }
-}
-
-const getWalmartHeaders = () =>{
-  const walmartConsumerId = process.env.WM_CONSUMER_ID
-  const walmartAuthKey = Buffer.from(process.env.WM_PRIVATE_KEY??"", 'base64').toString('utf8');
-  const walmartKeyVersion = process.env.WM_PRIVATE_KEY_VERSION
-  const time = Date.now();
-
-  const signature = crypto.createSign('RSA-SHA256')
-    .update(walmartConsumerId + "\n" + time + "\n" + walmartKeyVersion + "\n")
-    // @ts-ignore
-    .sign(walmartAuthKey, 'base64');
-  return {
-    'WM_CONSUMER.ID': walmartConsumerId,
-    "WM_SEC.AUTH_SIGNATURE": signature,
-    "WM_CONSUMER.INTIMESTAMP": time,
-    "WM_SEC.KEY_VERSION": walmartKeyVersion,
   }
 }
 
@@ -130,6 +110,32 @@ export const populatePagination = (req: Request, res: Response, next :NextFuncti
     res.locals.errors.push(e.response?.data ?? e.message)
   } finally {
     next()
+  }
+}
+
+export const renderNotFound = (req: Request, res: Response) => {
+  if (req.accepts("text/html")) {
+    res.status(404).render("404", {layout: false})
+  } else {
+    res.status(404).send({})
+  }
+}
+
+const getWalmartHeaders = () =>{
+  const walmartConsumerId = process.env.WM_CONSUMER_ID
+  const walmartAuthKey = Buffer.from(process.env.WM_PRIVATE_KEY??"", 'base64').toString('utf8');
+  const walmartKeyVersion = process.env.WM_PRIVATE_KEY_VERSION
+  const time = Date.now();
+
+  const signature = crypto.createSign('RSA-SHA256')
+    .update(walmartConsumerId + "\n" + time + "\n" + walmartKeyVersion + "\n")
+    // @ts-ignore
+    .sign(walmartAuthKey, 'base64');
+  return {
+    'WM_CONSUMER.ID': walmartConsumerId,
+    "WM_SEC.AUTH_SIGNATURE": signature,
+    "WM_CONSUMER.INTIMESTAMP": time,
+    "WM_SEC.KEY_VERSION": walmartKeyVersion,
   }
 }
 

@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center ">
+<div class="flex items-center ">
   <form method="get">
     <button {{#unless pageData.skip}}DISABLED{{/unless}} name="skip" value="{{pageData.previousSkip}}"
             class="p-2  text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300">
@@ -8,7 +8,7 @@
     </button>
     <input type="hidden" name="q" value="{{pageData.q}}"/>
   </form>
-  <form class="relative" method="get">
+  <form class="relative flex-1" method="get">
     <label for="qInput" class="absolute inset-y-0 left-0 flex items-center p-3">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 -960 960 960" fill="currentColor">
         <path
