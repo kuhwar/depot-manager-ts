@@ -7,7 +7,7 @@ const router = Router();
 router.use(checkSession)
 router.get('/', homeController)
 router.get('/products', listProductsController)
-router.get('/products/new', walmartLookupById, newProductController)
+router.get('/products/create', walmartLookupById, newProductController)
 router.get('/products/:id', homeController)
 router.get('/sales', salesController)
 router.get('/manifests', manifestsController)

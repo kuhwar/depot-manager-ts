@@ -1,7 +1,5 @@
 import {Request, Response} from 'express'
 import prisma from '../configurations/prisma'
-import crypto from "crypto"
-import axios from 'axios'
 
 export const homeController = (req: Request, res: Response) => {
   res.render('admin/home', {layout: 'admin', user: req.user})
@@ -24,7 +22,7 @@ export const newProductController = async (req: Request, res: Response) => {
   } catch (e:any) {
     res.locals.errors = [e.message]
   } finally {
-    res.render('admin/products-new', {layout: 'admin', user: req.user})
+    res.render('admin/products/create', {layout: 'admin', user: req.user})
   }
 }
 
