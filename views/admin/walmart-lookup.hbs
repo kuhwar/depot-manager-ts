@@ -7,7 +7,7 @@
   </div>
   <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
     {{#each walmartProducts}}
-      <a class="relative p-2 overflow-hidden rounded-md flex flex-col gap-2 border-2 dark:border-gray-700 bg-gray-200 dark:bg-gray-800" href=/admin/products/create?walmartId={{walmartId}}>
+      <a class="relative p-2 overflow-hidden rounded-md flex flex-col gap-2 border-2 dark:border-gray-700 bg-gray-200 dark:bg-gray-800" href='/admin/products/create?walmartId={{walmartId}}'>
         <img class="rounded-t-md object-cover aspect-square" alt="{{name}}" src="{{visuals.[0]}}?odnHeight=180&odnWidth=180&odnBg=ffffff"/>
         <span class="text-sm px-2 flex-1 line-clamp-2">{{name}}</span>
         <div class="flex items-center gap-x-2">
