@@ -36,13 +36,24 @@ export const walmartLookupById = async (req: Request, res: Response, next :NextF
   try{
     if (!req.query.walmartId  || typeof req.query.walmartId !== "string") return;
     if(!/^\d{4,11}$/.test(req.query.walmartId)) return res.locals.errors.push("invalid walmartId: "+req.query.walmartId)
-    const walmartRequestHeaders = getWalmartHeaders()
     const filters: string[] = []
     filters.push(`ids=${encodeURIComponent(req.query.walmartId)}`)
     const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?' + filters.join("&")
-    const apiResponse = await axios.get(url, { headers: walmartRequestHeaders })
+    const apiResponse = await axios.get(url, { headers: getWalmartHeaders() })
     if(!Array.isArray(apiResponse.data.items) || apiResponse.data.items.length !== 1) return res.locals.errors.push("No or multiple items found in response: ", JSON.stringify(apiResponse.data))
-    res.locals.walmartProduct = normalizeWalmartProduct(apiResponse.data.items[0])
+    const walmartProduct = normalizeWalmartProduct(apiResponse.data.items[0])
+    // const variants:any = (apiResponse.data.items[0].variants ?? []).map((id:any)=>{return {id:id, name:id, selected:id===walmartProduct.walmartId}})
+
+    const variationQueries = []
+    const variantIds = apiResponse.data.items[0].variants ?? []
+    while(variantIds.length > 0){
+        const idSubset = variantIds.splice(0, 20)
+        const variationLookupUrl = `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?ids=${encodeURIComponent(idSubset.join(","))}`
+        variationQueries.push(axios.get(variationLookupUrl, { headers: getWalmartHeaders() }))
+    }
+    const variationResponses = await Promise.all(variationQueries)
+    walmartProduct.variants = variationResponses.map(resp => resp.data.items.map((i:any)=>{return {id:i.itemId, name:getWalmartItemVariantLabel(i), selected: walmartProduct.walmartId === i.itemId, title: i.name}})).reduce((previousValue, currentValue)=>{return previousValue.concat(currentValue)},[])
+    res.locals.walmartProduct = walmartProduct
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)
   } finally {
@@ -141,6 +152,8 @@ const getWalmartHeaders = () =>{
 
 const normalizeWalmartProduct = (walmartProduct:any)=> {
   const visuals = new Set<string>()
+  const variantLabel = getWalmartItemVariantLabel(walmartProduct)
+
   visuals.add(walmartProduct.largeImage.replace(/\?.*$/, ""))
   walmartProduct.imageEntities.forEach((image: any) => visuals.add((image.largeImage??image.swatchImageSmall).replace(/\?.*$/, "")))
 
@@ -150,7 +163,15 @@ const normalizeWalmartProduct = (walmartProduct:any)=> {
     visuals: Array.from(visuals),
     price: walmartProduct.salePrice,
     description: walmartProduct.shortDescription,
-    variationLabel: (walmartProduct.size + " " + walmartProduct.color).trim(),
+    variationLabel: variantLabel,
     walmartId: walmartProduct.itemId,
+    variants: []
   }
+}
+
+const getWalmartItemVariantLabel = (walmartProduct: any)=> {
+  const labelList:string[] = []
+  if(walmartProduct.size && walmartProduct.size !== "") labelList.push(walmartProduct.size)
+  if(walmartProduct.color && walmartProduct.color !== "") labelList.push(walmartProduct.color)
+  return labelList.join(" ")
 }

@@ -2,21 +2,35 @@
   <form action="/admin/walmart-lookup" method="get" class="flex items-center justify-stretch gap-4 ">
     <h2 class="flex-none text-lg font-medium text-gray-800 dark:text-white">New Product</h2>
     <div class="flex-1 relative ">
-      <label for="inpProductSearch" class="absolute inset-y-0 left-0 flex items-center pl-3">
-        <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none">
-          <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </label>
-      <input id="inpProductSearch" type="text" placeholder="Search Walmart Catalog" name="q"
-             class="w-full py-1.5 pl-10 pr-4 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring"/>
+      {{>input-text label="Search Walmart" required=false value="" name="q"}}
     </div>
 
   </form>
-  <form action="" method="post" class="flex flex-col gap-4">
-    {{>input-text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
-    {{>input-textarea label="Description" value=walmartProduct.description name="description"}}
+  <form action="" method="post" class="flex flex-wrap gap-4">
+    <div class="basis-40 flex-1">
+      {{>input-text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
+    </div>
+    <div class="basis-40 flex-none">
+      <div class="relative w-full h-full">
+        <label class="absolute -top-3 left-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-sm text-xs " for="selectVariant">Available Variations:</label>
+        <select id="selectVariant" onchange="location.href='/admin/products/create?walmartId='+this.value"
+                class="h-full w-full p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring invalid:border-red-500">
+          {{# each walmartProduct.variants}}
+            <option {{#if this.selected}} selected {{/if}} value="{{this.id}}" title="{{this.title}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="basis-40 flex-none">
+      {{>input-text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
+    </div>
+    <div class="basis-32 flex-none">
+      {{>input-number label="Price" required=true value=walmartProduct.price name="price"}}
+    </div>
 
+    {{>input-textarea label="Description" value=walmartProduct.description name="description"}}
+    <input type="hidden" name="upc" value="{{walmartProduct.upc}}" />
+    <input type="hidden" name="walmartId" value="{{walmartProduct.walmartId}}" />
     <div class="flex gap-2 items-center flex-wrap">
       {{#each walmartProduct.visuals}}
         <div class="relative flex-none">
