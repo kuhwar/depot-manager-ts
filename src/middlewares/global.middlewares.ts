@@ -103,7 +103,7 @@ export const populatePagination = (req: Request, res: Response, next :NextFuncti
   try{
     const q= typeof req.query.q === "string" && req.query.q !== "" ? req.query.q : undefined
     const skip= (typeof req.query.skip === "string" && parseInt(req.query.skip) > 1) ? parseInt(req.query.skip) : 0
-    const take= (typeof req.query.count === "string" && parseInt(req.query.count) > 1) ? parseInt(req.query.count) : 12
+    const take= (typeof req.query.count === "string" && parseInt(req.query.count) > 1) ? parseInt(req.query.count) : 18
     const orderBy= typeof req.query.orderBy === "string" ? req.query.orderBy : ""
     const orderDirection= typeof  req.query.orderDirection === "string" && req.query.orderDirection === "desc" ? "desc" : "asc"
     const previousSkip = skip - take < 0 ? 0 :skip - take

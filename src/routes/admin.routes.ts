@@ -6,7 +6,7 @@ import { populatePagination, walmartLookupById, walmartLookupByQuery } from '../
 const router = Router();
 router.use(checkSession)
 router.get('/', homeController)
-router.get('/products', listProductsController)
+router.get('/products', populatePagination, listProductsController)
 router.get('/products/create', walmartLookupById, newProductController)
 router.get('/products/:id', homeController)
 router.get('/sales', salesController)

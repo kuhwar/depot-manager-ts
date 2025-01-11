@@ -7,10 +7,12 @@ export const homeController = (req: Request, res: Response) => {
 
 export const listProductsController = async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
-    where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}},
-    include: {items: {where: {isDeleted: false}, include: {shelf: true}}},
-    take: 60
+    where: {depotId: res.locals.depot.id, items:{some:{isDeleted:false}}, name:{search: res.locals.pageData.q}},
+    include: {items:{where:{isDeleted:false}, include: {shelf: true}}},
+    take:res.locals.pageData.take,
+    skip:res.locals.pageData.skip
   })
+  res.locals.pageData.hasNext = res.locals.products.length === res.locals.pageData.take
   res.render('admin/products', {layout: 'admin', user: req.user})
 }
 
