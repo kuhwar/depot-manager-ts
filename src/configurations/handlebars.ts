@@ -1,6 +1,6 @@
 import {create} from 'express-handlebars'
 
-export = create({
+export default create({
   defaultLayout: 'public',
   extname: "hbs",
   helpers: {

@@ -1,25 +1,25 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import { config } from 'dotenv'
+config()
 
-import express from 'express';
-import session from 'express-session';
-
+import app  from './configurations/express'
 import publicRoutes from './routes/public.routes'
 import authenticationRoutes from './routes/authentication.routes'
 import adminRoutes from './routes/admin.routes'
-
 import passport from './configurations/passport';
-import handlebars from "./configurations/handlebars";
+import handlebars from './configurations/handlebars'
 import {renderNotFound, validateHost} from "./middlewares/global.middlewares";
 
-const app = express();
+
+
+// set up view engine
 app.engine('hbs', handlebars.engine);
 app.set("view engine", "hbs");
 
-app.use(express.static('public'))
-app.use(session({secret: process.env.SESSION_SECRET??"", resave: false, saveUninitialized: true}));
+// set up passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// routes and middlewares
 app.use(validateHost)
 app.use("/", publicRoutes)
 app.use("/auth", authenticationRoutes)

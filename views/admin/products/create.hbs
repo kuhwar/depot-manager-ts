@@ -6,10 +6,13 @@
     </div>
 
   </form>
-  <form action="" method="post" class="flex flex-wrap gap-4">
+  <form action="" method="post" class="flex items-stretch flex-wrap gap-4">
+    <input type="hidden" name="upc" value="{{walmartProduct.upc}}" />
+    <input type="hidden" name="walmartId" value="{{walmartProduct.walmartId}}" />
     <div class="basis-40 flex-1">
       {{>input-text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
     </div>
+    {{#if walmartProduct.variants.length}}
     <div class="basis-40 flex-none">
       <div class="relative w-full h-full">
         <label class="absolute -top-3 left-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-sm text-xs " for="selectVariant">Available Variations:</label>
@@ -21,17 +24,15 @@
         </select>
       </div>
     </div>
+    {{/if}}
     <div class="basis-40 flex-none">
       {{>input-text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
     </div>
     <div class="basis-32 flex-none">
       {{>input-number label="Price" required=true value=walmartProduct.price name="price"}}
     </div>
-
     {{>input-textarea label="Description" value=walmartProduct.description name="description"}}
-    <input type="hidden" name="upc" value="{{walmartProduct.upc}}" />
-    <input type="hidden" name="walmartId" value="{{walmartProduct.walmartId}}" />
-    <div class="flex gap-2 items-center flex-wrap">
+    <div class="w-full flex gap-2 items-center flex-wrap">
       {{#each walmartProduct.visuals}}
         <div class="relative flex-none">
           <label class="">
@@ -49,5 +50,8 @@
         </label>
       </div>
     </div>
+    <button type="submit" class="px-6 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80">
+      Save
+    </button>
   </form>
 </div>

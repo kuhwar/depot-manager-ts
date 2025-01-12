@@ -1,5 +1,6 @@
 import {Request, Response} from 'express'
 import prisma from '../configurations/prisma'
+import { Product } from '@prisma/client'
 
 export const homeController = (req: Request, res: Response) => {
   res.render('admin/home', {layout: 'admin', user: req.user})
@@ -16,15 +17,35 @@ export const listProductsController = async (req: Request, res: Response) => {
   res.render('admin/products', {layout: 'admin', user: req.user})
 }
 
-export const newProductController = async (req: Request, res: Response) => {
+export const createProductController = async (req: Request, res: Response) => {
   try{
-    if (req.query.walmartId) return;
-
 
   } catch (e:any) {
     res.locals.errors = [e.message]
   } finally {
     res.render('admin/products/create', {layout: 'admin', user: req.user})
+  }
+}
+
+export const saveProductController = async (req: Request, res: Response) => {
+  try{
+    const product:Product = req.body
+    const dbProduct = await prisma.product.create({
+      data: {
+        depotId: 1,
+        categoryId: 1,
+        name: product.name,
+        upc: product.upc,
+        description: product.description,
+        variationLabel: product.variationLabel,
+        visuals: product.visuals ?? [],
+        price: Number(product.price),
+        walmartId: product.walmartId
+      }
+    })
+    res.redirect(`/admin/products/${dbProduct.id}/add`)
+  } catch (e:any) {
+    res.locals.errors = [e.message]
   }
 }
 
