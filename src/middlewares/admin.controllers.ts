@@ -34,7 +34,7 @@ export const saveProductController = async (req: Request, res: Response) => {
     const dbProduct = await prisma.product.create({
       data: {
         depotId: res.locals.depot.id,
-        categoryId: 1,
+        categoryId: res.locals.categoryId,
         name: product.name,
         upc: product.upc,
         description: product.description,

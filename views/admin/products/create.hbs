@@ -18,7 +18,7 @@
     {{>input-text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
     {{>input-text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
     {{>input-number label="Price" required=true value=walmartProduct.suggestedPrice name="price"}}
-    {{>select label="Category" options=categories name="categoryId" }}
+    {{>select label="Category" options=categories name="categoryId" required=true}}
     {{>input-textarea label="Description" value=walmartProduct.description name="description"}}
     <input type="hidden" name="upc" value="{{walmartProduct.upc}}"/>
     <input type="hidden" name="walmartId" value="{{walmartProduct.walmartId}}"/>
