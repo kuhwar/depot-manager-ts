@@ -1,6 +1,7 @@
 import {Request, Response} from 'express'
 import prisma from '../configurations/prisma'
 import { Product } from '@prisma/client'
+import { categories } from '../configurations/cache'
 
 export const homeController = (req: Request, res: Response) => {
   res.render('admin/home', {layout: 'admin', user: req.user})
@@ -19,7 +20,7 @@ export const listProductsController = async (req: Request, res: Response) => {
 
 export const createProductController = async (req: Request, res: Response) => {
   try{
-
+    res.locals.categories = categories
   } catch (e:any) {
     res.locals.errors = [e.message]
   } finally {
@@ -32,7 +33,7 @@ export const saveProductController = async (req: Request, res: Response) => {
     const product:Product = req.body
     const dbProduct = await prisma.product.create({
       data: {
-        depotId: 1,
+        depotId: res.locals.depot.id,
         categoryId: 1,
         name: product.name,
         upc: product.upc,

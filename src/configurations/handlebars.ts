@@ -1,14 +1,15 @@
-import {create} from 'express-handlebars'
+import {create} from 'express-handlebars';
 
-export default create({
+const handlebars = create({
   defaultLayout: 'public',
   extname: "hbs",
   helpers: {
-    currency: (amount: number) => {
-      return Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 0}).format(amount)
+    currency: (amount: number, fraction = 0) => {
+      return Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: fraction}).format(amount);
     },
     sum: (amount1: number, amount2: number)=>{
-      return amount1 + amount2
+      return amount1 + amount2;
     }
   }
-})
+});
+export default handlebars;
