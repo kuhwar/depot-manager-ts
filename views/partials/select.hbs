@@ -1,7 +1,7 @@
 <div class="relative w-full">
   <label class="absolute -top-3 left-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-sm text-xs " for="select{{name}}">{{label}}:</label>
   <select id="select{{name}}" name="{{name}}" {{#if required}}required{{/if}}
-          class="h-full w-full p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring invalid:border-red-500">
+          class="w-full p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring invalid:border-red-500">
     <option value="">Please select</option>
     {{# each options}}
       <option {{#if this.selected}}selected{{/if}} value="{{this.id}}">{{this.name}}</option>

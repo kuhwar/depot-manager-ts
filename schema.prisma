@@ -115,6 +115,7 @@ model Product {
   posts Post[]
   items Item[]
 
+  @@unique([walmartId, depotId], name: "depot_id_walmart_id_unique")
   @@index([categoryId])
   @@fulltext([name])
   @@map("products")
