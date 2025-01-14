@@ -43,6 +43,6 @@ Sales per day for the last 7 days
   <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 80</div>
   <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
 </div>
-<svg height="200" width="200" viewBox="0 0 100 100" class="-scale-y-100">
-    <polyline points="0,20 10,30 20,23 30,12 40,23 50,83 60,23 70,23 80,23 90,82 100,52" stroke="lime" stroke-width="3px" stroke-linejoin="round" fill="none"/>
-</svg>
+<div  class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  {{>charts/line graphData=postPerformanceGraphData}}
+</div>

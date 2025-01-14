@@ -3,7 +3,19 @@ import prisma from '../configurations/prisma'
 import { categories } from '../configurations/cache'
 
 export const homeController = (req: Request, res: Response) => {
-  res.render('admin/home', { layout: 'admin', user: req.user })
+  res.locals.postPerformanceGraphData = {
+    title: 'Listing Performance',
+    categoryLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    valueLabels: [],
+    dataSeries: [
+      { name: 'John Doe', color: 'lime', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) },
+      { name: 'Mike Tyson', color: 'cyan', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) },
+      { name: 'Mike Tyson', color: 'magenta', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) }
+    ]
+  }
+
+
+  res.render('admin/home')
 }
 
 export const listProductsController = async (req: Request, res: Response) => {
@@ -14,7 +26,7 @@ export const listProductsController = async (req: Request, res: Response) => {
     skip: res.locals.pageData.skip
   })
   res.locals.pageData.hasNext = res.locals.products.length === res.locals.pageData.take
-  res.render('admin/products', { layout: 'admin', user: req.user })
+  res.render('admin/products')
 }
 
 export const createProductController = async (req: Request, res: Response) => {
@@ -23,7 +35,7 @@ export const createProductController = async (req: Request, res: Response) => {
   } catch (e: any) {
     res.locals.errors = [e.message]
   } finally {
-    res.render('admin/products/create', { layout: 'admin', user: req.user })
+    res.render('admin/products/create')
   }
 }
 
@@ -68,28 +80,28 @@ export const saveProductController = async (req: Request, res: Response) => {
 }
 
 export const salesController = (req: Request, res: Response) => {
-  res.render('admin/sales', { layout: 'admin', user: req.user })
+  res.render('admin/sales')
 }
 
 export const manifestsController = (req: Request, res: Response) => {
-  res.render('admin/manifests', { layout: 'admin', user: req.user })
+  res.render('admin/manifests')
 }
 
 export const postsController = (req: Request, res: Response) => {
-  res.render('admin/posts', { layout: 'admin', user: req.user })
+  res.render('admin/posts')
 }
 
 export const workersController = (req: Request, res: Response) => {
-  res.render('admin/workers', { layout: 'admin', user: req.user })
+  res.render('admin/workers')
 }
 
 export const settingsController = (req: Request, res: Response) => {
-  res.render('admin/settings', { layout: 'admin', user: req.user })
+  res.render('admin/settings')
 }
 
 export const viewProductController = (req: Request, res: Response) => {
-  res.render('admin/view-product', { layout: 'admin' })
+  res.render('admin/view-product')
 }
 export const walmartLookupController = async (req: Request, res: Response) => {
-  res.render('admin/walmart-lookup', { layout: 'admin' })
+  res.render('admin/walmart-lookup')
 }

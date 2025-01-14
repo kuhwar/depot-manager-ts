@@ -12,6 +12,8 @@ export const logoutContoller = (req: Request, res: Response) => {
 
 export const checkSession = (req: Request, res: Response, next: NextFunction) => {
   if (req.user) {
+    res.locals.user = req.user;
+    res.locals.layout = "admin"
     return next();
   }
   res.redirect('/auth/login')

@@ -1,12 +1,5 @@
 <!--
-title: "Listing Performance"
-categoryLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-valueLabels: []
-dataSeries: [
-  {name:"John Doe", color:"lime", data:[300,230,320,310,320,412,323]},
-  {name:"Mike Tyson", color:"cyan", data:[423,330,220,210,420,312,223]},
-  {name:"Mike Tyson", color:"magenta", data:[423,330,220,210,420,312,223]}
-]
+
 
 
 
@@ -14,3 +7,20 @@ dataSeries: [
 
 
 -->
+<div class="flex flex-col items-center justify-center w-full">
+  <div>{{graphData.title}}</div>
+  <svg viewBox="-10 -10 190 120" class="w-full bg:gray-300 dark:bg-gray-700" >
+    <polyline points="0,0 0,99 110,99" fill="none" class="stroke-gray-500" stroke-linejoin="round"  />
+    {{#each graphData.dataSeries}}
+      <polyline points="{{#each this.data}}{{@index}}0,{{this}} {{/each}}" stroke="{{this.color}}"  stroke-linejoin="round" fill="none"  transform="translate(10, 100) scale(1.428571428571429, -.2257336343115124)  " />
+      <line x1="110" y1="{{@index}}0" x2="120" y2="{{@index}}0" stroke="{{this.color}}"  stroke-linejoin="round" transform="translate(0, 5)" />
+      <text x="125" y="{{@index}}0" font-size="8px" transform="translate(0, 8)" class="fill-white">{{this.name}}</text>
+    {{/each}}
+    <g transform="scale(1.4285,1)">
+      {{#each graphData.categoryLabels}}
+        <text x="{{@index}}0" y="110" font-size="8px" class="fill-white" transform="translate(5,0) ">{{this}}</text>
+      {{/each}}
+    </g>
+
+  </svg>
+</div>
