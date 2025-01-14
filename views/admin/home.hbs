@@ -22,27 +22,29 @@ Sales per day for the last 7 days
 ? May be logs from the agents
 </pre>
 
-<div class="grid grid-cols-3 rounded-lg overflow-hidden" style="grid-template-columns: 1fr 5rem 6rem">
-  <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 font-bold">Product</div>
-  <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 font-bold">Price</div>
-  <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 font-bold">Time</div>
 
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 1,380</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 380</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 10</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 30</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 80</div>
-  <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
-</div>
 <div  class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-  {{>charts/line graphData=postPerformanceGraphData}}
+  <div class="grid grid-cols-3 rounded-lg overflow-hidden col-span-full" style="grid-template-columns: 1fr 5rem 8rem">
+    <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 text-center font-bold">Product</div>
+    <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 text-center font-bold">Price</div>
+    <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 text-center font-bold">Time</div>
+
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 1,380</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">Just now</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 380</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">1 hr ago</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 10</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">2 hrs ago</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 30</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">This morning</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 80</div>
+    <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">Yesterday</div>
+  </div>
+  {{>charts/bar-stack graphData=postPerformanceGraphData}}
+  {{>charts/big-number graphData=stockCountGraphData}}
 </div>

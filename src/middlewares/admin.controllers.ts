@@ -10,10 +10,14 @@ export const homeController = (req: Request, res: Response) => {
     dataSeries: [
       { name: 'John Doe', color: 'lime', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) },
       { name: 'Mike Tyson', color: 'cyan', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) },
-      { name: 'Mike Tyson', color: 'magenta', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) }
+      { name: 'Jane Doe', color: 'magenta', data: Array.from({ length: 7 }, () => Math.floor(Math.random() * (450 - 350 + 1)) + 350) }
     ]
   }
-
+  res.locals.stockCountGraphData = {
+    title: 'Stock Count',
+    number: 342,
+    label:"pcs"
+  }
 
   res.render('admin/home')
 }

@@ -3,15 +3,15 @@
   <svg viewBox="-10 -10 190 120" class="w-full bg:gray-300 dark:bg-gray-700" >
     <polyline points="0,0 0,99 110,99" fill="none" class="stroke-gray-500" stroke-linejoin="round"  />
     {{#each graphData.dataSeries}}
-      <polyline points="{{#each this.data}}{{@index}}0,{{this}} {{/each}}" stroke="{{this.color}}"  stroke-linejoin="round" fill="none"  transform="translate(10, 100) scale(1.428571428571429, -.2257336343115124)  " />
+      <polyline points="{{#each this.data}}{{@index}}0,{{this}} {{/each}}" stroke="{{this.color}}"   fill="none"  transform="scale(1.41 1) translate(10, 100) scale(1, -.2257336343115124)  " />
       <line x1="110" y1="{{@index}}0" x2="120" y2="{{@index}}0" stroke="{{this.color}}"  stroke-linejoin="round" transform="translate(0, 5)" />
       <text x="125" y="{{@index}}0" font-size="8px" transform="translate(0, 8)" class="fill-white">{{this.name}}</text>
     {{/each}}
-    <g transform="scale(1.4285,1)">
+    <g transform="scale(1.41 1)">
       {{#each graphData.categoryLabels}}
-        <text x="{{@index}}0" y="110" font-size="8px" class="fill-white" transform="translate(5,0) ">{{this}}</text>
+        <text x="{{@index}}0" y="110" font-size="8px" class="fill-white" transform="translate(10,0)">{{this}}</text>
+        <line x1="{{@index}}0" y1="0" x2="{{@index}}0" y2="100" class="stroke-gray-500" transform=" translate(10,0)" stroke-dasharray="1 1 5 1" stroke-width="0.5"/>
       {{/each}}
     </g>
-
   </svg>
 </div>
