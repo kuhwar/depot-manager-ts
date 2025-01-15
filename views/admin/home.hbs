@@ -12,23 +12,33 @@
     </button>
   </div>
 </div>
-<pre>
-Design a home page for admin users where admin can see
+<!--<pre>-->
+<!--Design a home page for admin users where admin can see-->
 
-Today's sales (Last 5 items sold)
-# Products posted today
-A graph of marketplace listings performance, Will show total number of listing visibility and clicks for the last 7 days
-Sales per day for the last 7 days
-? May be logs from the agents
-</pre>
+<!--Today's sales (Last 5 items sold)-->
+<!--# Products posted today-->
+<!--A graph of marketplace listings performance, Will show total number of listing visibility and clicks for the last 7 days-->
+<!--Sales per day for the last 7 days-->
+<!--? May be logs from the agents-->
+<!--</pre>-->
 
 
-<div  class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-  <div class="grid grid-cols-3 rounded-lg overflow-hidden col-span-full" style="grid-template-columns: 1fr 5rem 8rem">
+<div class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  <div class="grid grid-cols-3 rounded-lg overflow-hidden col-span-full" style="grid-template-columns: 1fr 6rem 8rem">
     <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 text-center font-bold">Product</div>
     <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 text-center font-bold">Price</div>
     <div class="bg:gray-200 dark:bg-gray-800 px-3 py-2 text-center font-bold">Time</div>
 
+    <form class="grid grid-cols-subgrid col-span-3">
+      <input type="hidden" name="itemId"/>
+      <div class="bg:gray-300 dark:bg-gray-700 px-1 py-1 overflow-ellipsis text-nowrap overflow-hidden">
+        {{>inputs/text label="Product"}}
+      </div>
+      <div class="bg:gray-300 dark:bg-gray-700 px-1 py-1 text-right">
+        {{>inputs/number label="Price" required=true sign="$"}}
+      </div>
+      <div class="bg:gray-300 dark:bg-gray-700 p-1">{{>inputs/submit label="Sell"}}</div>
+    </form>
     <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">Better Homes and Garden Book Shelf</div>
     <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2 text-right">$ 1,380</div>
     <div class="bg:gray-300 dark:bg-gray-700 px-3 py-2">Just now</div>

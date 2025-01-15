@@ -1,13 +1,13 @@
 <div class="flex flex-col justify-stretch gap-6">
   <h2 class="flex-none text-lg font-medium text-gray-800 dark:text-white">New Product</h2>
   <form action="/admin/walmart-lookup" method="get" class="flex items-center justify-stretch gap-4 border-b-2 border-gray-500 pb-4">
-    {{>input-text label="Search Walmart" value="" required=true name="q"}}
+    {{>inputs/text label="Search Walmart" value="" required=true name="q"}}
   </form>
   <form action="" method="post" class="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
     <input type="hidden" name="upc" value="{{walmartProduct.upc}}"/>
     <input type="hidden" name="walmartId" value="{{walmartProduct.walmartId}}"/>
     <div class="sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 2xl:col-span-6">
-      {{>input-text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
+      {{>inputs/text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
     </div>
     {{#if walmartProduct.variants.length}}
       <div class="relative w-full">
@@ -20,12 +20,12 @@
         </select>
       </div>
     {{/if}}
-    {{>input-text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
-    {{>input-number label="Price" required=true value=walmartProduct.suggestedPrice name="price" sign="$"}}
-    {{>select label="Category" options=categories name="categoryId" required=true}}
-    {{>select label="Shelf" options=availableShelves name="shelfId" required=true}}
+    {{>inputs/text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
+    {{>inputs/number label="Price" required=true value=walmartProduct.suggestedPrice name="price" sign="$"}}
+    {{>inputs/select label="Category" options=categories name="categoryId" required=true}}
+    {{>inputs/select label="Shelf" options=availableShelves name="shelfId" required=true}}
     <div class="sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 2xl:col-span-6">
-      {{>input-textarea label="Description" value=walmartProduct.description name="description"}}
+      {{>inputs/textarea label="Description" value=walmartProduct.description name="description"}}
     </div>
     {{#each walmartProduct.visuals}}
       <label class="relative">
@@ -41,7 +41,7 @@
       <input type="file" class="hidden" accept="image/*"/>
     </label>
     <div class="sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 2xl:col-span-6">
-      {{> button-submit label="Save"}}
+      {{>inputs/submit label="Save"}}
     </div>
   </form>
 </div>
