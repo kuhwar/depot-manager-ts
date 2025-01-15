@@ -1,43 +1,56 @@
 import {Request, Response} from 'express'
 import prisma from '../configurations/prisma'
 import {categories} from '../configurations/cache'
+import {BarStackGraphType, BigNumberGraphType} from "../types";
+
 
 export const homeController = (req: Request, res: Response) => {
-  res.locals.postPerformanceGraphData = {
+  const postPerformanceGraphData: BarStackGraphType = {
     title: 'Listing Performance',
     categoryLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    valueLabels: [],
     dataSeries: [{
       name: 'John Doe',
       color: 'lime',
-      data: Array.from({length: 7}, () => {return {value: Math.ceil(Math.random() * (100)) + 100}})
+      data: Array.from({length: 7}, () => {
+        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
+      })
     }, {
       name: 'Mike Tyson',
       color: 'cyan',
-      data: Array.from({length: 7}, () => {return {value: Math.ceil(Math.random() * (100)) + 100}})
+      data: Array.from({length: 7}, () => {
+        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
+      })
     }, {
       name: 'Jane Doe',
       color: 'magenta',
-      data: Array.from({length: 7}, () => {return {value: Math.ceil(Math.random() * (100)) + 100}})
-    }]
+      data: Array.from({length: 7}, () => {
+        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
+      })
+    }],
+    xScale: 1,
+    yScale: 1
   }
-  const startFrom = Array.from({length: res.locals.postPerformanceGraphData.categoryLabels.length }, ()=>0)
+  const startFrom = Array.from({length: postPerformanceGraphData.categoryLabels.length}, () => 0)
 
-  for (let index = 0; index < startFrom.length; index++){
-    for (const series of res.locals.postPerformanceGraphData.dataSeries){
+  for (let index = 0; index < startFrom.length; index++) {
+    for (const series of postPerformanceGraphData.dataSeries) {
       series.data[index].start = startFrom[index]
       series.data[index].end = series.data[index].start + series.data[index].value
       startFrom[index] = series.data[index].end
     }
   }
-  res.locals.yScale = 100 / Math.max(...startFrom)
-  res.locals.xScale = 10 / startFrom.length
-  res.locals.stockCountGraphData = {
+  postPerformanceGraphData.yScale = -100 / Math.max(...startFrom)
+  postPerformanceGraphData.xScale = 10 / startFrom.length
+
+  const stockCountGraphData: BigNumberGraphType = {
     title: 'Stock Count',
     number: 342,
-    label: "pcs"
+    label: "pcs",
+    color: "cyan"
   }
 
+  res.locals.stockCountGraphData = stockCountGraphData
+  res.locals.postPerformanceGraphData = postPerformanceGraphData
   res.render('admin/home')
 }
 

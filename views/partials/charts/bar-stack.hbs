@@ -1,11 +1,11 @@
 <div class="flex flex-col items-center justify-center w-full rounded-md overflow-hidden">
   <div class="w-full text-center bg:gray-200 dark:bg-gray-800 px-3 py-2 font-bold">{{graphData.title}}</div>
   <svg viewBox="-10 -10 190 120" class="w-full bg:gray-300 dark:bg-gray-700">
-    <g transform="translate(0, 100) scale({{xScale}},-1) scale(1,{{yScale}})">
+    <g transform="translate(0, 100) scale({{graphData.xScale}},{{graphData.yScale}})">
       {{#each graphData.dataSeries}}
         <g stroke="{{this.color}}">
         {{#each this.data}}
-          <line x1="{{@index}}4" y1="{{this.start}}" x2="{{@index}}4" y2="{{this.end}}" stroke-width="5"></line>
+          <line class="data-series-bar" x1="{{@index}}4" y1="{{this.start}}" x2="{{@index}}4" y2="{{this.end}}" data-value="{{this.value}}" stroke-width="5"></line>
         {{/each}}
         </g>
       {{/each}}
@@ -15,7 +15,24 @@
       <text x="125" y="{{@index}}0" font-size="8px" transform="translate(0, 8)" class="fill-white">{{this.name}}</text>
     {{/each}}
 
+    <text id="valueDisplay" x="125" y="90" font-size="8px" transform="translate(0, 8)" class="fill-white"></text>
     <line x1="0" y1="0" x2="00" y2="100" stroke="lime" class="stroke-gray-500"></line>
     <line x1="0" y1="100" x2="100" y2="100" stroke="lime" class="stroke-gray-500"></line>
   </svg>
 </div>
+
+<script>
+  const valueDisplay = document.getElementById("valueDisplay")
+  const showValue = (e) => {
+    valueDisplay.innerHTML = e.target.dataset.value
+    e.target.style.opacity = 0.8
+
+  }
+  const hideValue = (e) => {
+    valueDisplay.innerHTML = ""
+    e.target.style.opacity = 1
+
+  }
+  document.querySelectorAll(".data-series-bar").forEach(bar => bar.addEventListener("mouseover", showValue))
+  document.querySelectorAll(".data-series-bar").forEach(bar => bar.addEventListener("mouseout", hideValue))
+</script>
