@@ -130,10 +130,11 @@ model Item {
   soldAt DateTime? @map("sold_at")
 
   // Foreign Keeys
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int     @map("product_id")
-  shelf     Shelf   @relation(fields: [shelfId], references: [id])
-  shelfId   Int     @map("shelf_id")
+  product      Product       @relation(fields: [productId], references: [id])
+  productId    Int           @map("product_id")
+  shelf        Shelf         @relation(fields: [shelfId], references: [id])
+  shelfId      Int           @map("shelf_id")
+  manifestItem ManifestItem?
 
   @@map("items")
 }
@@ -151,4 +152,41 @@ model Post {
   depotId   Int     @map("depot_id")
 
   @@map("posts")
+}
+
+model Manifest {
+  id        Int      @id @unique()
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false) @map("is_deleted")
+
+  cost         Float  @default(0)
+  totalValue   Float  @default(0) @map("total_value")
+  originalFile String @db.LongText @map("original_file")
+
+  items ManifestItem[]
+
+  @@map("manifests")
+}
+
+model ManifestItem {
+  id        Int      @id @unique()
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false) @map("is_deleted")
+
+  upc       String
+  palletId  String @map("pallet_id")
+  quantity  Int
+  price     Float
+  visual    String @default("/default-product.png")
+  walmartId String @map("walmart_id")
+
+  // Foreign Keeys
+  item       Item?    @relation(fields: [itemId], references: [id])
+  itemId     Int?     @map("item_id") @unique
+  manifest   Manifest @relation(fields: [manifestId], references: [id])
+  manifestId Int      @map("manifest_id")
+
+  @@map("manifest_items")
 }

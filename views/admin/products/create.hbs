@@ -10,15 +10,7 @@
       {{>inputs/text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
     </div>
     {{#if walmartProduct.variants.length}}
-      <div class="relative w-full">
-        <label class="absolute -top-3 left-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-sm text-xs " for="selectVariant">Select a Variant:</label>
-        <select id="selectVariant" onchange="location.href='/admin/products/create?walmartId='+this.value"
-                class="w-full p-2 text-gray-700 bg-white border rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring invalid:border-red-500">
-          {{# each walmartProduct.variants}}
-            <option {{#if this.selected}} selected {{/if}} value="{{this.id}}" title="{{this.title}}">{{this.name}}</option>
-          {{/each}}
-        </select>
-      </div>
+      {{>inputs/select label="Variant" options=walmartProduct.variants name="variant"}}
     {{/if}}
     {{>inputs/text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
     {{>inputs/number label="Price" required=true value=walmartProduct.suggestedPrice name="price" sign="$"}}
@@ -46,5 +38,10 @@
   </form>
 </div>
 <script>
-
+  const selectVariant = document.getElementById("selectvariant")
+  if(selectVariant){
+    selectVariant.addEventListener("change", (event) => {
+      location.href='/admin/products/create?walmartId='+event.target.value
+    })
+  }
 </script>
