@@ -7,4 +7,4 @@ router.get('/google', googleAuthenticatorController );
 router.get('/google/callback', googleAuthenticatorCallbackController);
 router.get('/logout', logoutContoller);
 
-export = router
+export default router

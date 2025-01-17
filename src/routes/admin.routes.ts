@@ -17,4 +17,4 @@ router.get('/workers', workersController)
 router.get('/settings', settingsController)
 router.get("/walmart-lookup", populatePagination, walmartLookupByQuery, walmartLookupController)
 
-export = router
+export default router
