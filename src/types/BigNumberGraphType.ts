@@ -1,4 +1,4 @@
-import {GraphColorType} from "./index";
+import {GraphColorType} from ".";
 
 type BigNumberGraphType = {
   title: string

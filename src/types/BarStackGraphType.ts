@@ -1,4 +1,4 @@
-import {GraphColorType} from "./";
+import {GraphColorType} from ".";
 
 type BarStackGraphType = {
   title:string,
