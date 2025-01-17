@@ -1,9 +1,9 @@
-import {AcceptedColorType} from ".";
+import {GraphColorType} from "./index";
 
 type BigNumberGraphType = {
   title: string
   number: number
   label: string,
-  color: AcceptedColorType
+  color: GraphColorType
 }
 export default BigNumberGraphType

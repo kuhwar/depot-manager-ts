@@ -1,11 +1,11 @@
-import {AcceptedColorType} from ".";
+import {GraphColorType} from "./index";
 
 type BarStackGraphType = {
   title:string,
   categoryLabels: string[]
   dataSeries: {
     name: string
-    color: AcceptedColorType
+    color: GraphColorType
     data: {
       value: number
       start: number
