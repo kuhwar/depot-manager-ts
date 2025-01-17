@@ -17,7 +17,7 @@ app.use(session({
   saveUninitialized: true,
   store: new RedisStore({
     client: redisClient,
-    disableTTL: true
+    ttl: 1800
   })
 }));
 
