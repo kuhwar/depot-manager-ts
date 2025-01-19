@@ -155,14 +155,14 @@ model Post {
 }
 
 model Manifest {
-  id        Int      @id @unique()
+  id        String   @unique() @db.Char(5)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
 
   cost         Float  @default(0)
   totalValue   Float  @default(0) @map("total_value")
-  originalFile String @db.LongText @map("original_file")
+  originalFile String @map("original_file") @db.LongText
 
   items ManifestItem[]
 
@@ -184,9 +184,9 @@ model ManifestItem {
 
   // Foreign Keeys
   item       Item?    @relation(fields: [itemId], references: [id])
-  itemId     Int?     @map("item_id") @unique
+  itemId     Int?     @unique @map("item_id")
   manifest   Manifest @relation(fields: [manifestId], references: [id])
-  manifestId Int      @map("manifest_id")
+  manifestId String   @map("manifest_id") @db.Char(5)
 
   @@map("manifest_items")
 }

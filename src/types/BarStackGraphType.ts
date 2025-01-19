@@ -1,6 +1,6 @@
 import {GraphColorType} from ".";
 
-type BarStackGraphType = {
+export type BarStackGraphType = {
   title:string,
   categoryLabels: string[]
   dataSeries: {
@@ -15,4 +15,3 @@ type BarStackGraphType = {
   xScale: number
   yScale:number
 }
-export default BarStackGraphType

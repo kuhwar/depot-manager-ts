@@ -1,6 +1,18 @@
 import { Router } from 'express';
 import { checkSession } from '../middlewares/authentication.middlewares'
-import { listProductsController, homeController, manifestsController, postsController, salesController, settingsController, workersController, createProductController, walmartLookupController, saveProductController } from '../middlewares/admin.controllers'
+import {
+  listProductsController,
+  homeController,
+  indexManifestsController,
+  postsController,
+  salesController,
+  settingsController,
+  workersController,
+  createProductController,
+  walmartLookupController,
+  saveProductController,
+  importManifestController
+} from '../middlewares/admin.controllers'
 import { populatePagination, walmartLookupById, walmartLookupByQuery } from '../middlewares/global.middlewares'
 
 const router = Router();
@@ -11,7 +23,8 @@ router.get('/products/create', walmartLookupById, createProductController)
 router.post('/products/create', saveProductController)
 router.get('/products/:id', homeController)
 router.get('/sales', salesController)
-router.get('/manifests', manifestsController)
+router.get('/manifests', indexManifestsController)
+router.post('/manifests', importManifestController)
 router.get('/posts', postsController)
 router.get('/workers', workersController)
 router.get('/settings', settingsController)

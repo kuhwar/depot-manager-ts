@@ -1,2 +1,1 @@
-type GraphColorType = "lime" | "cyan" | "magenta" | "blue" | "red"
-export default GraphColorType
+export type GraphColorType = "lime" | "cyan" | "magenta" | "blue" | "red"

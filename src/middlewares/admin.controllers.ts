@@ -2,6 +2,7 @@ import {Request, Response} from 'express'
 import prisma from '../configurations/prisma'
 import {categories} from '../configurations/cache'
 import {BarStackGraphType, BigNumberGraphType} from "../types";
+import {parse as parseCsv} from 'csv-string';
 
 
 export const homeController = (req: Request, res: Response) => {
@@ -119,8 +120,26 @@ export const salesController = (req: Request, res: Response) => {
   res.render('admin/sales')
 }
 
-export const manifestsController = (req: Request, res: Response) => {
+export const indexManifestsController = (req: Request, res: Response) => {
   res.render('admin/manifests')
+}
+
+export const importManifestController = (req: Request, res: Response) => {
+  try{
+    if(!req.files || !req.files.manifest) return res.locals.errors.push("No manifest file sent")
+    // @ts-ignore
+    if(req.files.manifest.mimetype !== "text/csv") return res.locals.errors.push("Invalid mimetype")
+    // @ts-ignore
+    const csvContent:string = req.files.manifest.data.toString()
+
+    const csvData = parseCsv(csvContent, {comma:",", output:"objects"})
+    console.log(csvData.length)
+    const upcList = Array.from(new Set(csvData.filter(line=>line.UPC !== "").map(line=>line.UPC)))
+  } catch (e) {
+
+  } finally {
+    res.redirect("#")
+  }
 }
 
 export const postsController = (req: Request, res: Response) => {
