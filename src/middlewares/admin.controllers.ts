@@ -1,9 +1,19 @@
-import {Request, Response} from 'express'
+import {NextFunction, Request, Response} from 'express'
 import prisma from '../configurations/prisma'
 import {categories} from '../configurations/cache'
 import {BarStackGraphType, BigNumberGraphType} from "../types";
 import {parse as parseCsv} from 'csv-string';
 
+
+export const setAdminLayout = (req: Request, res: Response, next: NextFunction) => {
+  try{
+    res.locals.layout = "admin"
+  } catch (e: any) {
+    res.locals.errors.push(e.message ?? e.toString())
+  } finally {
+    res.locals.errors.length !== 0 ?  res.render("404", {layout: ""}) : next()
+  }
+}
 
 export const homeController = (req: Request, res: Response) => {
   const postPerformanceGraphData: BarStackGraphType = {
@@ -126,15 +136,16 @@ export const indexManifestsController = (req: Request, res: Response) => {
 
 export const importManifestController = (req: Request, res: Response) => {
   try{
-    if(!req.files || !req.files.manifest) return res.locals.errors.push("No manifest file sent")
+    if(!req.files || !req.files.manifest) { res.locals.errors.push("No manifest file sent"); return; }
     // @ts-ignore
-    if(req.files.manifest.mimetype !== "text/csv") return res.locals.errors.push("Invalid mimetype")
+    if(req.files.manifest.mimetype !== "text/csv") { res.locals.errors.push("Invalid mimetype"); return; }
     // @ts-ignore
-    const csvContent:string = req.files.manifest.data.toString()
+    res.locals.csvContent = req.files.manifest.data.toString()
 
-    const csvData = parseCsv(csvContent, {comma:",", output:"objects"})
-    console.log(csvData.length)
-    const upcList = Array.from(new Set(csvData.filter(line=>line.UPC !== "").map(line=>line.UPC)))
+    res.locals.csvData = parseCsv(res.locals.csvContent, {comma:",", output:"objects"})
+
+    const upcList = Array.from(new Set(res.locals.csvData.filter((line:any)=> line.UPC !== "").map((line:any)=>line.UPC)))
+
   } catch (e) {
 
   } finally {

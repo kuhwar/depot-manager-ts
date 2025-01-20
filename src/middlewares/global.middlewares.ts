@@ -34,15 +34,15 @@ export const validateHost = async (req: Request, res: Response, next: NextFuncti
   }
 }
 
-export const walmartLookupById = async (req: Request, res: Response, next: NextFunction) => {
+export const walmartLookupById = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
   try {
     if (!req.query.walmartId || typeof req.query.walmartId !== 'string') return
-    if (!/^\d{4,11}$/.test(req.query.walmartId)) return res.locals.errors.push('invalid walmartId: ' + req.query.walmartId)
+    if (!/^\d{4,11}$/.test(req.query.walmartId)) { res.locals.errors.push('invalid walmartId: ' + req.query.walmartId); return}
     const filters: string[] = []
     filters.push(`ids=${encodeURIComponent(req.query.walmartId)}`)
     const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?' + filters.join('&')
     const apiResponse = await axios.get(url, { headers: getWalmartHeaders() })
-    if (!Array.isArray(apiResponse.data.items) || apiResponse.data.items.length !== 1) return res.locals.errors.push('No or multiple items found in response: ', JSON.stringify(apiResponse.data))
+    if (!Array.isArray(apiResponse.data.items) || apiResponse.data.items.length !== 1) { res.locals.errors.push('No or multiple items found in response: ', JSON.stringify(apiResponse.data)); return; }
     const walmartProduct = normalizeWalmartProduct(apiResponse.data.items[0])
     // const variants:any = (apiResponse.data.items[0].variants ?? []).map((id:any)=>{return {id:id, name:id, selected:id===walmartProduct.walmartId}})
 
@@ -86,14 +86,25 @@ export const walmartLookupByQuery = async (req: Request, res: Response, next: Ne
 
 export const walmartLookupByUpc = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.query.upc || typeof req.query.upc !== 'string') return
-    if (/^\d*$/.test(req.query.upc)) return res.locals.errors.push('invalid upc: ' + req.query.walmartId)
     const walmartRequestHeaders = getWalmartHeaders()
     const filters: string[] = []
-    filters.push(`upc=${encodeURIComponent(req.query.upc)}`)
+    filters.push(`upc=${encodeURIComponent(res.locals.walmartUpcs.join(','))}`)
     const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?' + filters.join('&')
     const apiResponse = await axios.get(url, { headers: walmartRequestHeaders })
     res.locals.walmartProducts = apiResponse.data
+  } catch (e: any) {
+    res.locals.errors.push(e.response?.data ?? e.message)
+  } finally {
+    next()
+  }
+}
+
+export const validateWalmartLookupByUpcRequest = (req: Request, res: Response, next: NextFunction) => {
+  try{
+    if (!req.query.upc || typeof req.query.upc !== 'string') return
+    res.locals.walmartUpcs = req.query.upc.split(',')
+    const invalidUpcs = res.locals.walmartUpcs.filter((upc:string)=> !/^\d*$/.test(upc))
+    if (invalidUpcs.length !== 0) return res.locals.errors.push('invalid upcs: ' + invalidUpcs.join(","))
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)
   } finally {
@@ -117,7 +128,8 @@ export const populatePagination = (req: Request, res: Response, next: NextFuncti
       orderBy: orderBy,
       orderDirection: orderDirection,
       previousSkip: previousSkip,
-      nextSkip: nextSkip
+      nextSkip: nextSkip,
+      hasNext:false
     }
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)
@@ -128,7 +140,7 @@ export const populatePagination = (req: Request, res: Response, next: NextFuncti
 
 export const renderNotFound = (req: Request, res: Response) => {
   if (req.accepts('text/html')) {
-    res.status(404).render('404', { layout: false })
+    res.status(404).render('404', { layout: "" })
   } else {
     res.status(404).send({})
   }
