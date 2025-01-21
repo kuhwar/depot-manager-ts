@@ -11,12 +11,14 @@ import {
   createProductController,
   walmartLookupController,
   saveProductController,
-  importManifestController
+  importManifestController,
+  setAdminLayout
 } from '../middlewares/admin.controllers'
 import { populatePagination, walmartLookupById, walmartLookupByQuery } from '../middlewares/global.middlewares'
 
 const router = Router();
 router.use(checkSession)
+router.use(setAdminLayout)
 router.get('/', homeController)
 router.get('/products', populatePagination, listProductsController)
 router.get('/products/create', walmartLookupById, createProductController)
