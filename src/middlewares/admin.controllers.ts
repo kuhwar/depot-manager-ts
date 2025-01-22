@@ -3,6 +3,7 @@ import prisma from '../configurations/prisma'
 import {categories} from '../configurations/cache'
 import {BarStackGraphType, BigNumberGraphType} from "../types";
 import {parse as parseCsv} from 'csv-string';
+import {searchByUpc} from "../configurations/walmart";
 
 
 export const setAdminLayout = (req: Request, res: Response, next: NextFunction) => {
@@ -134,7 +135,7 @@ export const indexManifestsController = (req: Request, res: Response) => {
   res.render('admin/manifests')
 }
 
-export const importManifestController = (req: Request, res: Response) => {
+export const importManifestController = async (req: Request, res: Response) => {
   try{
     if(!req.files || !req.files.manifest) { res.locals.errors.push("No manifest file sent"); return; }
     // @ts-ignore
@@ -144,10 +145,11 @@ export const importManifestController = (req: Request, res: Response) => {
 
     res.locals.csvData = parseCsv(res.locals.csvContent, {comma:",", output:"objects"})
 
-    const upcList = Array.from(new Set(res.locals.csvData.filter((line:any)=> line.UPC !== "").map((line:any)=>line.UPC)))
-
-  } catch (e) {
-
+    const upcList:string[] = Array.from(new Set(res.locals.csvData.filter((line:any)=> line.UPC !== "").map((line:any)=>line.UPC)))
+    const products = await searchByUpc(upcList)
+    console.log(products)
+  } catch (e:any) {
+    res.locals.errors.push(e.message)
   } finally {
     res.redirect("#")
   }

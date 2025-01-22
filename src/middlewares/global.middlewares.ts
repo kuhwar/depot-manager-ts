@@ -3,6 +3,8 @@ import { Depot, Shelf } from '@prisma/client'
 import prisma from '../configurations/prisma'
 import crypto from 'crypto'
 import axios from 'axios'
+import {WalmartProduct} from "../types/WalmartProduct";
+import {searchById, searchByUpc} from "../configurations/walmart";
 
 const hostCacheExpirationSeconds = parseInt(process.env.HOST_CACHE_EXPIRATION_SECONDS ?? '1800')
 // Note to future myself: We can migrate this host cache to REDIS
@@ -38,23 +40,12 @@ export const walmartLookupById = async (req: Request, res: Response, next: NextF
   try {
     if (!req.query.walmartId || typeof req.query.walmartId !== 'string') return
     if (!/^\d{4,11}$/.test(req.query.walmartId)) { res.locals.errors.push('invalid walmartId: ' + req.query.walmartId); return}
-    const filters: string[] = []
-    filters.push(`ids=${encodeURIComponent(req.query.walmartId)}`)
-    const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?' + filters.join('&')
-    const apiResponse = await axios.get(url, { headers: getWalmartHeaders() })
-    if (!Array.isArray(apiResponse.data.items) || apiResponse.data.items.length !== 1) { res.locals.errors.push('No or multiple items found in response: ', JSON.stringify(apiResponse.data)); return; }
-    const walmartProduct = normalizeWalmartProduct(apiResponse.data.items[0])
-    // const variants:any = (apiResponse.data.items[0].variants ?? []).map((id:any)=>{return {id:id, name:id, selected:id===walmartProduct.walmartId}})
-
-    const variationQueries = []
-    const variantIds = apiResponse.data.items[0].variants ?? []
-    while (variantIds.length > 0) {
-      const idSubset = variantIds.splice(0, 20)
-      const variationLookupUrl = `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?ids=${encodeURIComponent(idSubset.join(','))}`
-      variationQueries.push(axios.get(variationLookupUrl, { headers: getWalmartHeaders() }))
-    }
-    const variationResponses = await Promise.all(variationQueries)
-    walmartProduct.variants = variationResponses.map(resp => resp.data.items.map((i: any) => {return { id: i.itemId, name: getWalmartItemVariantLabel(i), selected: walmartProduct.walmartId === i.itemId, title: i.name }})).reduce((previousValue, currentValue) => {return previousValue.concat(currentValue)}, [])
+    const productsFound: WalmartProduct[] = await searchById([req.query.walmartId])
+    if(productsFound.length === 0) {res.locals.errors.push('no products found with walmartId: ' + req.query.walmartId); return;}
+    const walmartProduct:WalmartProduct = productsFound[0]
+    const ids = walmartProduct.variants.map(v=>v.id.toString())
+    const variants = await searchById(ids)
+    walmartProduct.variants = variants.map(v => {return {id: v.walmartId, name:v.variationLabel, selected: walmartProduct.walmartId === v.walmartId, title:v.name}})
     res.locals.walmartProduct = walmartProduct
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)

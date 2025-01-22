@@ -1,25 +1,49 @@
 import crypto from "crypto";
 import axios from "axios";
+import {WalmartProduct} from "../types/WalmartProduct";
 
-export const searchById = (ids:string[]):Promise<WalmartProduct[]> =>{
-  return new Promise(async (resolve, reject)=>{
-    try{
+export const searchById = (ids: string[]): Promise<WalmartProduct[]> => {
+  return new Promise(async (resolve, reject) => {
+    try {
       const lookupQuery = []
+      const headers= getWalmartHeaders()
       while (ids.length > 0) {
         const idSubset = ids.splice(0, 20)
         const variationLookupUrl = `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?ids=${encodeURIComponent(idSubset.join(','))}`
-        lookupQuery.push(axios.get(variationLookupUrl, { headers: getWalmartHeaders() }))
+        lookupQuery.push(axios.get(variationLookupUrl, {headers}))
       }
       const lookupQueryResponses = await Promise.all(lookupQuery)
-      resolve(lookupQueryResponses.map(apiResponse => apiResponse.data.items || Array.isArray(apiResponse.data.items) ? apiResponse.data.items.map(normalizeWalmartProduct) : []).reduce((previousValue, currentValue) => {return previousValue.concat(currentValue)}, []))
-    } catch (e:any) {
+      resolve(lookupQueryResponses.map(apiResponse => apiResponse.data.items && Array.isArray(apiResponse.data.items) ? apiResponse.data.items.map(normalizeWalmartProduct) : []).reduce((previousValue: WalmartProduct[], currentValue: WalmartProduct[]) => {
+        return previousValue.concat(currentValue)
+      }, []))
+    } catch (e: any) {
       reject(e.message ?? e.toString())
     }
   })
 }
 
+export const searchByUpc = (upcs: string[]): Promise<WalmartProduct[]> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // const lookupQuery = []
+      const headers = getWalmartHeaders()
+      while (upcs.length > 0) {
+        const upcSubset = upcs.splice(0, 1)
+        const variationLookupUrl = `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?upc=${(upcSubset.join(','))}`
+        // lookupQuery.push(axios.get(variationLookupUrl, { headers: getWalmartHeaders() }))
+        const response = await axios.get(variationLookupUrl, {headers})
+        console.log(response.data)
+      }
+      // const lookupQueryResponses = await Promise.allSettled(lookupQuery)
+      // resolve(lookupQueryResponses.map(apiResponse => apiResponse.status === "fulfilled" && apiResponse.value.data.items && Array.isArray(apiResponse.value.data.items) ? apiResponse.value.data.items.map(normalizeWalmartProduct) : []).reduce((previousValue:WalmartProduct[], currentValue:WalmartProduct[]) => {return previousValue.concat(currentValue)}, []))
+    } catch (e: any) {
+      reject(e)
+    }
+  })
+}
 
 const getWalmartHeaders = () => {
+  if(!process.env.WM_CONSUMER_ID || !process.env.WM_PRIVATE_KEY || !process.env.WM_PRIVATE_KEY_VERSION) throw new Error("Walmart credentials are not set")
   const walmartConsumerId = process.env.WM_CONSUMER_ID
   const walmartAuthKey = Buffer.from(process.env.WM_PRIVATE_KEY ?? '', 'base64').toString('utf8')
   const walmartKeyVersion = process.env.WM_PRIVATE_KEY_VERSION
@@ -37,7 +61,7 @@ const getWalmartHeaders = () => {
   }
 }
 
-const normalizeWalmartProduct = (walmartProduct: any):WalmartProduct=> {
+const normalizeWalmartProduct = (walmartProduct: any): WalmartProduct => {
   const visuals = new Set<string>()
   const variantLabel = getWalmartItemVariantLabel(walmartProduct)
 
@@ -53,11 +77,18 @@ const normalizeWalmartProduct = (walmartProduct: any):WalmartProduct=> {
     description: walmartProduct.shortDescription,
     variationLabel: variantLabel,
     walmartId: walmartProduct.itemId,
-    variants: []
+    variants: walmartProduct.variants.map((id:number) => {
+      return {
+        id: id,
+        name: "",
+        selected: false,
+        title: ""
+      }
+    })
   }
 }
 
-const getWalmartItemVariantLabel = (walmartProduct: any):string => {
+const getWalmartItemVariantLabel = (walmartProduct: any): string => {
   const labelList: string[] = []
   if (walmartProduct.size && walmartProduct.size !== '') labelList.push(walmartProduct.size)
   if (walmartProduct.color && walmartProduct.color !== '') labelList.push(walmartProduct.color)

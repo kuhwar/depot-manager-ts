@@ -1,4 +1,4 @@
-type WalmartProduct = {
+export type WalmartProduct = {
   name: string
   upc: string
   visuals: string[]
@@ -6,7 +6,7 @@ type WalmartProduct = {
   suggestedPrice: number
   description: string
   variationLabel: string
-  walmartId: string
+  walmartId: number
   variants: {
     id: number
     name: string
