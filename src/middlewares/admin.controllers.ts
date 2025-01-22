@@ -3,7 +3,7 @@ import prisma from '../configurations/prisma'
 import {categories} from '../configurations/cache'
 import {BarStackGraphType, BigNumberGraphType} from "../types";
 import {parse as parseCsv} from 'csv-string';
-import {searchByUpc} from "../configurations/walmart";
+import {addMissingCheckDigit, searchByUpc} from "../configurations/walmart";
 
 
 export const setAdminLayout = (req: Request, res: Response, next: NextFunction) => {
@@ -145,7 +145,7 @@ export const importManifestController = async (req: Request, res: Response) => {
 
     res.locals.csvData = parseCsv(res.locals.csvContent, {comma:",", output:"objects"})
 
-    const upcList:string[] = Array.from(new Set(res.locals.csvData.filter((line:any)=> line.UPC !== "").map((line:any)=>line.UPC)))
+    const upcList:string[] = Array.from(new Set(res.locals.csvData.filter((line:any)=> line.UPC !== "").map((line:any)=>addMissingCheckDigit(line.UPC))))
     const products = await searchByUpc(upcList)
     console.log(products)
   } catch (e:any) {
