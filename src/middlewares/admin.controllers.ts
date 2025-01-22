@@ -149,17 +149,22 @@ export const importManifestController = async (req: Request, res: Response) => {
       return
     }
     const csvContent = req.files.manifest.data.toString()
-
+    const fileName = req.files.manifest.name
     const csvData = parseCsv(csvContent, { comma: ',', output: 'objects' })
-
-    const upcList: string[] = Array.from(new Set(csvData.filter((line: any) => line.UPC !== '').map((line: any) => addMissingCheckDigit(line.UPC))))
+    csvData.forEach((item: any) => {if(item.UPC !== '') item.UPC = addMissingCheckDigit(item.UPC).padEnd(12,"0").slice(-12)})
+    const upcList: string[] = Array.from(new Set(csvData.filter((line: any) => line.UPC !== '').map((line: any) => line.UPC)))
     const products = await searchByUpc(upcList)
-    // prisma.manifest.create({
-    //   data: {
-    //     cost: req.body.cost,
-    //     //totalValue: csvData.reduce((previousValue, currentValue)=>previousValue + currentValue.,0)
-    //   }
-    // })
+    prisma.manifest.create({
+      data: {
+        id:"AB123",
+        cost: req.body.cost,
+        totalValue: csvData.reduce((previousValue,currentValue)=>previousValue + Number(currentValue["Ext. Retail"]), 0),
+        fileName: fileName,
+        fileContent: csvContent,
+
+        //totalValue: csvData.reduce((previousValue, currentValue)=>previousValue + currentValue.,0)
+      }
+    })
   } catch (e: any) {
     res.locals.errors.push(e.message)
   } finally {

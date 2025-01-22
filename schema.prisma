@@ -160,11 +160,11 @@ model Manifest {
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
 
-  cost         Float  @default(0)
-  totalValue   Float  @default(0) @map("total_value")
-  originalFile String @map("original_file") @db.LongText
-
-  items ManifestItem[]
+  cost        Float          @default(0)
+  totalValue  Float          @default(0) @map("total_value")
+  fileContent String         @map("file_content") @db.LongText
+  fileName    String         @map("file_name")
+  items       ManifestItem[]
 
   @@map("manifests")
 }
