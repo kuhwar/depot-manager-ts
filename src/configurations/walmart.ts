@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import axios from "axios";
 import {WalmartProduct} from "../types/WalmartProduct";
-import {response} from "express";
 
 export const addMissingCheckDigit = (upc: string): string => {
   let multiplier = 3
@@ -41,16 +40,14 @@ export const searchByUpc = (upcs: string[]): Promise<WalmartProduct[]> => {
       while (upcs.length > 0) {
         const upcSubset = upcs.splice(0, 20)
         const url = `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?upc=${(upcSubset.map((upc: string) => upc.padStart(13, "0").slice(-12)).join(','))}`
-        console.log(url)
         const requestPromise = axios.get(url, { headers })
           .then(r => {return r.data.items && Array.isArray(r.data.items) ? r.data.items.map(normalizeWalmartProduct) : []})
-          .catch((e:any) => {console.log(JSON.stringify(e.response?.data ?? e.message ?? e)); return []})
+          .catch((e:any) => {console.warn(JSON.stringify(e.response?.data ?? e.message ?? e)); return []})
         lookupQuery.push(requestPromise)
-        // const response = await axios.get(url, {headers})
-        // console.log(response.data)
       }
       const lookupQueryResponses = await Promise.all(lookupQuery)
-      resolve([])
+      resolve(lookupQueryResponses.reduce((previousValue, currentValue)=> [...previousValue, ...currentValue], []))
+
     } catch (e: any) {
       reject(e)
     }

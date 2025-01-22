@@ -1,18 +1,17 @@
-import {NextFunction, Request, Response} from 'express'
+import { NextFunction, Request, Response } from 'express'
 import prisma from '../configurations/prisma'
-import {categories} from '../configurations/cache'
-import {BarStackGraphType, BigNumberGraphType} from "../types";
-import {parse as parseCsv} from 'csv-string';
-import {addMissingCheckDigit, searchByUpc} from "../configurations/walmart";
-
+import { categories } from '../configurations/cache'
+import { BarStackGraphType, BigNumberGraphType } from '../types'
+import { parse as parseCsv } from 'csv-string'
+import { addMissingCheckDigit, searchByUpc } from '../configurations/walmart'
 
 export const setAdminLayout = (req: Request, res: Response, next: NextFunction) => {
-  try{
-    res.locals.layout = "admin"
+  try {
+    res.locals.layout = 'admin'
   } catch (e: any) {
     res.locals.errors.push(e.message ?? e.toString())
   } finally {
-    res.locals.errors.length !== 0 ?  res.render("404", {layout: ""}) : next()
+    res.locals.errors.length !== 0 ? res.render('404', { layout: '' }) : next()
   }
 }
 
@@ -23,26 +22,26 @@ export const homeController = (req: Request, res: Response) => {
     dataSeries: [{
       name: 'John Doe',
       color: 'lime',
-      data: Array.from({length: 7}, () => {
-        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
+      data: Array.from({ length: 7 }, () => {
+        return { start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100 }
       })
     }, {
       name: 'Mike Tyson',
       color: 'cyan',
-      data: Array.from({length: 7}, () => {
-        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
+      data: Array.from({ length: 7 }, () => {
+        return { start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100 }
       })
     }, {
       name: 'Jane Doe',
       color: 'magenta',
-      data: Array.from({length: 7}, () => {
-        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
+      data: Array.from({ length: 7 }, () => {
+        return { start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100 }
       })
     }],
     xScale: 1,
     yScale: 1
   }
-  const startFrom = Array.from({length: postPerformanceGraphData.categoryLabels.length}, () => 0)
+  const startFrom = Array.from({ length: postPerformanceGraphData.categoryLabels.length }, () => 0)
 
   for (let index = 0; index < startFrom.length; index++) {
     for (const series of postPerformanceGraphData.dataSeries) {
@@ -57,8 +56,8 @@ export const homeController = (req: Request, res: Response) => {
   const stockCountGraphData: BigNumberGraphType = {
     title: 'Stock Count',
     number: 342,
-    label: "pcs",
-    color: "cyan"
+    label: 'pcs',
+    color: 'cyan'
   }
 
   res.locals.stockCountGraphData = stockCountGraphData
@@ -68,8 +67,8 @@ export const homeController = (req: Request, res: Response) => {
 
 export const listProductsController = async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
-    where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}, name: {search: res.locals.pageData.q}},
-    include: {items: {where: {isDeleted: false}, include: {shelf: true}}},
+    where: { depotId: res.locals.depot.id, items: { some: { isDeleted: false } }, name: { search: res.locals.pageData.q } },
+    include: { items: { where: { isDeleted: false }, include: { shelf: true } } },
     take: res.locals.pageData.take,
     skip: res.locals.pageData.skip
   })
@@ -89,10 +88,10 @@ export const createProductController = async (req: Request, res: Response) => {
 
 export const saveProductController = async (req: Request, res: Response) => {
   try {
-    let existingProduct = await prisma.product.findFirst({where: {depotId: res.locals.depot.id, walmartId: req.body.walmartId}})
+    let existingProduct = await prisma.product.findFirst({ where: { depotId: res.locals.depot.id, walmartId: req.body.walmartId } })
     if (existingProduct) {
       await prisma.product.update({
-        where: {id: existingProduct.id}, data: {
+        where: { id: existingProduct.id }, data: {
           categoryId: Number(req.body.categoryId),
           name: req.body.name,
           upc: req.body.upc,
@@ -100,7 +99,7 @@ export const saveProductController = async (req: Request, res: Response) => {
           variationLabel: req.body.variationLabel,
           visuals: req.body.visuals ?? [],
           price: Number(req.body.price),
-          items: {create: {shelfId: Number(req.body.shelfId)}}
+          items: { create: { shelfId: Number(req.body.shelfId) } }
         }
       })
     } else {
@@ -115,7 +114,7 @@ export const saveProductController = async (req: Request, res: Response) => {
           visuals: req.body.visuals ?? [],
           price: Number(req.body.price),
           walmartId: req.body.walmartId,
-          items: {create: {shelfId: Number(req.body.shelfId)}}
+          items: { create: { shelfId: Number(req.body.shelfId) } }
         }
       })
     }
@@ -136,22 +135,35 @@ export const indexManifestsController = (req: Request, res: Response) => {
 }
 
 export const importManifestController = async (req: Request, res: Response) => {
-  try{
-    if(!req.files || !req.files.manifest) { res.locals.errors.push("No manifest file sent"); return; }
-    // @ts-ignore
-    if(req.files.manifest.mimetype !== "text/csv") { res.locals.errors.push("Invalid mimetype"); return; }
-    // @ts-ignore
-    res.locals.csvContent = req.files.manifest.data.toString()
+  try {
+    if (!req.files || !req.files.manifest) {
+      res.locals.errors.push('No manifest file sent')
+      return
+    }
+    if (Array.isArray(req.files.manifest)) {
+      res.locals.errors.push('Multiple manifest files sent')
+      return
+    }
+    if (req.files.manifest.mimetype !== 'text/csv') {
+      res.locals.errors.push('Invalid mimetype')
+      return
+    }
+    const csvContent = req.files.manifest.data.toString()
 
-    res.locals.csvData = parseCsv(res.locals.csvContent, {comma:",", output:"objects"})
+    const csvData = parseCsv(csvContent, { comma: ',', output: 'objects' })
 
-    const upcList:string[] = Array.from(new Set(res.locals.csvData.filter((line:any)=> line.UPC !== "").map((line:any)=>addMissingCheckDigit(line.UPC))))
+    const upcList: string[] = Array.from(new Set(csvData.filter((line: any) => line.UPC !== '').map((line: any) => addMissingCheckDigit(line.UPC))))
     const products = await searchByUpc(upcList)
-    console.log(products)
-  } catch (e:any) {
+    // prisma.manifest.create({
+    //   data: {
+    //     cost: req.body.cost,
+    //     //totalValue: csvData.reduce((previousValue, currentValue)=>previousValue + currentValue.,0)
+    //   }
+    // })
+  } catch (e: any) {
     res.locals.errors.push(e.message)
   } finally {
-    res.redirect("#")
+    res.redirect('#')
   }
 }
 
