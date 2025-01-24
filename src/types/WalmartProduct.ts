@@ -6,9 +6,9 @@ export type WalmartProduct = {
   suggestedPrice: number
   description: string
   variationLabel: string
-  walmartId: number
+  walmartId: string
   variants: {
-    id: number
+    id: string
     name: string
     selected: boolean
     title: string

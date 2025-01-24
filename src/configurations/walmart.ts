@@ -88,7 +88,7 @@ const normalizeWalmartProduct = (walmartProduct: any): WalmartProduct => {
     suggestedPrice: Math.round(walmartProduct.salePrice * 0.8),
     description: walmartProduct.shortDescription,
     variationLabel: variantLabel,
-    walmartId: walmartProduct.itemId,
+    walmartId: String(walmartProduct.itemId),
     variants: (walmartProduct.variants ?? []).map((id: number) => {
       return {
         id: id,

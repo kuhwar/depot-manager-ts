@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express'
+import {NextFunction, Request, Response} from 'express'
 import prisma from '../configurations/prisma'
-import { categories } from '../configurations/cache'
-import { BarStackGraphType, BigNumberGraphType } from '../types'
-import { parse as parseCsv } from 'csv-string'
-import { addMissingCheckDigit, searchByUpc } from '../configurations/walmart'
+import {categories} from '../configurations/cache'
+import {BarStackGraphType, BigNumberGraphType} from '../types'
+import {parse as parseCsv} from 'csv-string'
+import {addMissingCheckDigit, searchByUpc} from '../configurations/walmart'
 
 export const setAdminLayout = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -11,7 +11,7 @@ export const setAdminLayout = (req: Request, res: Response, next: NextFunction) 
   } catch (e: any) {
     res.locals.errors.push(e.message ?? e.toString())
   } finally {
-    res.locals.errors.length !== 0 ? res.render('404', { layout: '' }) : next()
+    res.locals.errors.length !== 0 ? res.render('404', {layout: ''}) : next()
   }
 }
 
@@ -22,26 +22,26 @@ export const homeController = (req: Request, res: Response) => {
     dataSeries: [{
       name: 'John Doe',
       color: 'lime',
-      data: Array.from({ length: 7 }, () => {
-        return { start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100 }
+      data: Array.from({length: 7}, () => {
+        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
       })
     }, {
       name: 'Mike Tyson',
       color: 'cyan',
-      data: Array.from({ length: 7 }, () => {
-        return { start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100 }
+      data: Array.from({length: 7}, () => {
+        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
       })
     }, {
       name: 'Jane Doe',
       color: 'magenta',
-      data: Array.from({ length: 7 }, () => {
-        return { start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100 }
+      data: Array.from({length: 7}, () => {
+        return {start: 0, end: 0, value: Math.ceil(Math.random() * (100)) + 100}
       })
     }],
     xScale: 1,
     yScale: 1
   }
-  const startFrom = Array.from({ length: postPerformanceGraphData.categoryLabels.length }, () => 0)
+  const startFrom = Array.from({length: postPerformanceGraphData.categoryLabels.length}, () => 0)
 
   for (let index = 0; index < startFrom.length; index++) {
     for (const series of postPerformanceGraphData.dataSeries) {
@@ -67,8 +67,8 @@ export const homeController = (req: Request, res: Response) => {
 
 export const listProductsController = async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
-    where: { depotId: res.locals.depot.id, items: { some: { isDeleted: false } }, name: { search: res.locals.pageData.q } },
-    include: { items: { where: { isDeleted: false }, include: { shelf: true } } },
+    where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}, name: {search: res.locals.pageData.q}},
+    include: {items: {where: {isDeleted: false}, include: {shelf: true}}},
     take: res.locals.pageData.take,
     skip: res.locals.pageData.skip
   })
@@ -88,10 +88,10 @@ export const createProductController = async (req: Request, res: Response) => {
 
 export const saveProductController = async (req: Request, res: Response) => {
   try {
-    let existingProduct = await prisma.product.findFirst({ where: { depotId: res.locals.depot.id, walmartId: req.body.walmartId } })
+    let existingProduct = await prisma.product.findFirst({where: {depotId: res.locals.depot.id, walmartId: req.body.walmartId}})
     if (existingProduct) {
       await prisma.product.update({
-        where: { id: existingProduct.id }, data: {
+        where: {id: existingProduct.id}, data: {
           categoryId: Number(req.body.categoryId),
           name: req.body.name,
           upc: req.body.upc,
@@ -99,7 +99,7 @@ export const saveProductController = async (req: Request, res: Response) => {
           variationLabel: req.body.variationLabel,
           visuals: req.body.visuals ?? [],
           price: Number(req.body.price),
-          items: { create: { shelfId: Number(req.body.shelfId) } }
+          items: {create: {shelfId: Number(req.body.shelfId)}}
         }
       })
     } else {
@@ -114,7 +114,7 @@ export const saveProductController = async (req: Request, res: Response) => {
           visuals: req.body.visuals ?? [],
           price: Number(req.body.price),
           walmartId: req.body.walmartId,
-          items: { create: { shelfId: Number(req.body.shelfId) } }
+          items: {create: {shelfId: Number(req.body.shelfId)}}
         }
       })
     }
@@ -150,19 +150,34 @@ export const importManifestController = async (req: Request, res: Response) => {
     }
     const csvContent = req.files.manifest.data.toString()
     const fileName = req.files.manifest.name
-    const csvData = parseCsv(csvContent, { comma: ',', output: 'objects' })
-    csvData.forEach((item: any) => {if(item.UPC !== '') item.UPC = addMissingCheckDigit(item.UPC).padEnd(12,"0").slice(-12)})
+    const csvData = parseCsv(csvContent, {comma: ',', output: 'objects'})
+    csvData.forEach((item: any) => {
+      if (item.UPC !== '') item.UPC = addMissingCheckDigit(item.UPC).padEnd(12, "0").slice(-12)
+    })
     const upcList: string[] = Array.from(new Set(csvData.filter((line: any) => line.UPC !== '').map((line: any) => line.UPC)))
-    const products = await searchByUpc(upcList)
-    prisma.manifest.create({
+    const apiProducts = await searchByUpc(upcList)
+    await prisma.manifest.create({
       data: {
-        id:"AB123",
-        cost: req.body.cost,
-        totalValue: csvData.reduce((previousValue,currentValue)=>previousValue + Number(currentValue["Ext. Retail"]), 0),
+        id: generateManifestId(),
+        cost: Number(req.body.cost),
+        totalValue: csvData.reduce((previousValue, currentValue) => previousValue + Number(currentValue["Ext. Retail"]), 0),
         fileName: fileName,
         fileContent: csvContent,
-
-        //totalValue: csvData.reduce((previousValue, currentValue)=>previousValue + currentValue.,0)
+        items: {
+          create: csvData.map((item: Record<string, string>) => {
+            const apiProduct = apiProducts.find(p => p.upc === item["UPC"])
+            return {
+              upc: item["UPC"],
+              name: item["Item Description"],
+              palletId: item["Pallet ID"],
+              quantity: Number(item["Qty"]),
+              price: Number(item["Unit Retail"]),
+              visual: apiProduct?.visuals[0],
+              walmartId: apiProduct?.walmartId,
+              itemId: null
+            }
+          })
+        }
       }
     })
   } catch (e: any) {
@@ -189,4 +204,9 @@ export const viewProductController = (req: Request, res: Response) => {
 }
 export const walmartLookupController = async (req: Request, res: Response) => {
   res.render('admin/walmart-lookup')
+}
+const generateManifestId = () => {
+  const idLength = 5
+  const characterList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from({length: idLength}, ()=>characterList[Math.floor(Math.random()*characterList.length)]).join("")
 }

@@ -140,7 +140,7 @@ model Item {
 }
 
 model Post {
-  id        Int      @id @unique()
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
@@ -170,17 +170,18 @@ model Manifest {
 }
 
 model ManifestItem {
-  id        Int      @id @unique()
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false) @map("is_deleted")
 
   upc       String
-  palletId  String @map("pallet_id")
+  name      String
+  palletId  String  @map("pallet_id")
   quantity  Int
   price     Float
-  visual    String @default("/default-product.png")
-  walmartId String @map("walmart_id")
+  visual    String  @default("/default-product.png") @db.MediumText
+  walmartId String? @map("walmart_id")
 
   // Foreign Keeys
   item       Item?    @relation(fields: [itemId], references: [id])
