@@ -134,7 +134,7 @@ export const indexManifestsController = (req: Request, res: Response) => {
   res.render('admin/manifests')
 }
 
-export const importManifestController = async (req: Request, res: Response) => {
+export const createManifestController = async (req: Request, res: Response) => {
   try {
     if (!req.files || !req.files.manifest) {
       res.locals.errors.push('No manifest file sent')

@@ -11,7 +11,7 @@ import {
   createProductController,
   walmartLookupController,
   saveProductController,
-  importManifestController,
+  createManifestController,
   setAdminLayout
 } from '../middlewares/admin.controllers'
 import { populatePagination, walmartLookupById, walmartLookupByQuery } from '../middlewares/global.middlewares'
@@ -26,7 +26,8 @@ router.post('/products/create', saveProductController)
 router.get('/products/:id', homeController)
 router.get('/sales', salesController)
 router.get('/manifests', indexManifestsController)
-router.post('/manifests', importManifestController)
+router.post('/manifests', createManifestController)
+// router.post('/manifests/:id', viewManifestController)
 router.get('/posts', postsController)
 router.get('/workers', workersController)
 router.get('/settings', settingsController)
