@@ -54,6 +54,13 @@ export const searchByUpc = (upcs: string[]): Promise<WalmartProduct[]> => {
   })
 }
 
+
+export const generateManifestId = () => {
+  const idLength = 5
+  const characterList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from({length: idLength}, ()=>characterList[Math.floor(Math.random()*characterList.length)]).join("")
+}
+
 const getWalmartHeaders = () => {
   if (!process.env.WM_CONSUMER_ID || !process.env.WM_PRIVATE_KEY || !process.env.WM_PRIVATE_KEY_VERSION) throw new Error("Walmart credentials are not set")
   const walmartConsumerId = process.env.WM_CONSUMER_ID

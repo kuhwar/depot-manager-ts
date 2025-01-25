@@ -3,7 +3,6 @@ import { checkSession } from '../middlewares/authentication.middlewares'
 import {
   listProductsController,
   homeController,
-  indexManifestsController,
   postsController,
   salesController,
   settingsController,
@@ -11,10 +10,10 @@ import {
   createProductController,
   walmartLookupController,
   saveProductController,
-  createManifestController,
   setAdminLayout
 } from '../middlewares/admin.controllers'
 import { populatePagination, walmartLookupById, walmartLookupByQuery } from '../middlewares/global.middlewares'
+import { createManifestController, indexManifestsController } from '../middlewares/admin'
 
 const router = Router();
 router.use(checkSession)
