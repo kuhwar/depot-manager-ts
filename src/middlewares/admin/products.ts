@@ -3,8 +3,6 @@ import prisma from "../../configurations/prisma";
 import {categories} from "../../configurations/cache";
 import {searchByQuery} from "../../configurations/walmart";
 
-
-
 export const listProducts = async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
     where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}, name: {search: res.locals.pageData.q}},
@@ -26,7 +24,7 @@ export const createProduct = async (req: Request, res: Response) => {
   }
 }
 
-export const saveProductController = async (req: Request, res: Response) => {
+export const saveProduct = async (req: Request, res: Response) => {
   try {
     let existingProduct = await prisma.product.findFirst({where: {depotId: res.locals.depot.id, walmartId: req.body.walmartId}})
     if (existingProduct) {

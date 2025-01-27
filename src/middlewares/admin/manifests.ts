@@ -3,11 +3,11 @@ import { parse as parseCsv } from 'csv-string'
 import { addMissingCheckDigit, generateManifestId, searchByUpc } from '../../configurations/walmart'
 import prisma from '../../configurations/prisma'
 
-export const indexManifestsController = (req: Request, res: Response) => {
+export const listManifests = (req: Request, res: Response) => {
   res.render('admin/manifests')
 }
 
-export const createManifestController = async (req: Request, res: Response) => {
+export const saveManifest = async (req: Request, res: Response) => {
   try {
     if (!req.files || !req.files.manifest) {
       res.locals.errors.push('No manifest file sent')

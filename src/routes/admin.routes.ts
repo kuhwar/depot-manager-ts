@@ -2,11 +2,11 @@ import { Router } from 'express';
 import { checkSession } from '../middlewares/authentication.middlewares'
 import {populatePagination, setAdminLayout, walmartLookupById} from '../middlewares/global.middlewares'
 import {
-  createManifestController,
+  saveManifest,
   createProduct,
-  indexManifestsController,
+  listManifests,
   listProducts,
-  saveProductController,
+  saveProduct,
   indexSalesController,
   indexPostsController,
   indexWorkersController, indexSettingsController, showReports, showProduct, lookupProducts
@@ -21,13 +21,13 @@ router.get  ('/', showReports)
 router.get  ('/products', populatePagination, listProducts)
 router.get  ('/products/create', walmartLookupById, createProduct)
 router.get  ("/products/create/lookup", populatePagination, lookupProducts)
-router.post ('/products/create', saveProductController)
+router.post ('/products', saveProduct)
 router.get  ('/products/:id', showProduct)
 
 router.get  ('/sales', indexSalesController)
 
-router.get  ('/manifests', indexManifestsController)
-router.post ('/manifests', createManifestController)
+router.get  ('/manifests', listManifests)
+router.post ('/manifests', saveManifest)
 // router.post('/manifests/:id', viewManifestController)
 
 router.get  ('/posts', indexPostsController)

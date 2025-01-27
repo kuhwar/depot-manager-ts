@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { Depot, Shelf } from '@prisma/client'
 import prisma from '../configurations/prisma'
-import crypto from 'crypto'
-import axios from 'axios'
 import {WalmartProduct} from "../types/WalmartProduct";
 import {searchById} from "../configurations/walmart";
 
@@ -54,55 +52,6 @@ export const walmartLookupById = async (req: Request, res: Response, next: NextF
   }
 }
 
-export const walmartLookupByQuery = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!res.locals.pageData.q || res.locals.pageData.q === '') return
-    const walmartRequestHeaders = getWalmartHeaders()
-    const filters: string[] = []
-    filters.push(`query=${encodeURIComponent(res.locals.pageData.q)}`)
-    filters.push(`numItems=${encodeURIComponent(res.locals.pageData.take)}`)
-    if (res.locals.pageData.skip) {
-      filters.push(`start=${encodeURIComponent(res.locals.pageData.skip)}`)
-    }
-    const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?' + filters.join('&')
-    const apiResponse = await axios.get(url, { headers: walmartRequestHeaders })
-    res.locals.walmartProducts = apiResponse.data.items.map(normalizeWalmartProduct)
-    res.locals.pageData.hasNext = Math.min(1000, apiResponse.data.totalResults) > (apiResponse.data.start + apiResponse.data.numItems)
-  } catch (e: any) {
-    res.locals.errors.push(e.response?.data ?? e.message)
-  } finally {
-    next()
-  }
-}
-
-export const walmartLookupByUpc = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const walmartRequestHeaders = getWalmartHeaders()
-    const filters: string[] = []
-    filters.push(`upc=${encodeURIComponent(res.locals.walmartUpcs.join(','))}`)
-    const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items?' + filters.join('&')
-    const apiResponse = await axios.get(url, { headers: walmartRequestHeaders })
-    res.locals.walmartProducts = apiResponse.data
-  } catch (e: any) {
-    res.locals.errors.push(e.response?.data ?? e.message)
-  } finally {
-    next()
-  }
-}
-
-export const validateWalmartLookupByUpcRequest = (req: Request, res: Response, next: NextFunction) => {
-  try{
-    if (!req.query.upc || typeof req.query.upc !== 'string') return
-    res.locals.walmartUpcs = req.query.upc.split(',')
-    const invalidUpcs = res.locals.walmartUpcs.filter((upc:string)=> !/^\d*$/.test(upc))
-    if (invalidUpcs.length !== 0) return res.locals.errors.push('invalid upcs: ' + invalidUpcs.join(","))
-  } catch (e: any) {
-    res.locals.errors.push(e.response?.data ?? e.message)
-  } finally {
-    next()
-  }
-}
-
 export const populatePagination = (req: Request, res: Response, next: NextFunction) => {
   try {
     const q = typeof req.query.q === 'string' && req.query.q !== '' ? req.query.q : undefined
@@ -145,49 +94,4 @@ export const setAdminLayout = (req: Request, res: Response, next: NextFunction) 
   } finally {
     res.locals.errors.length !== 0 ? res.render('404', {layout: ''}) : next()
   }
-}
-
-const getWalmartHeaders = () => {
-  const walmartConsumerId = process.env.WM_CONSUMER_ID
-  const walmartAuthKey = Buffer.from(process.env.WM_PRIVATE_KEY ?? '', 'base64').toString('utf8')
-  const walmartKeyVersion = process.env.WM_PRIVATE_KEY_VERSION
-  const time = Date.now()
-
-  const signature = crypto.createSign('RSA-SHA256')
-    .update(walmartConsumerId + '\n' + time + '\n' + walmartKeyVersion + '\n')
-    // @ts-ignore
-    .sign(walmartAuthKey, 'base64')
-  return {
-    'WM_CONSUMER.ID': walmartConsumerId,
-    'WM_SEC.AUTH_SIGNATURE': signature,
-    'WM_CONSUMER.INTIMESTAMP': time,
-    'WM_SEC.KEY_VERSION': walmartKeyVersion,
-  }
-}
-
-const normalizeWalmartProduct = (walmartProduct: any) => {
-  const visuals = new Set<string>()
-  const variantLabel = getWalmartItemVariantLabel(walmartProduct)
-
-  visuals.add(walmartProduct.largeImage.replace(/\?.*$/, ''))
-  walmartProduct.imageEntities.forEach((image: any) => visuals.add((image.largeImage ?? image.swatchImageSmall).replace(/\?.*$/, '')))
-
-  return {
-    name: walmartProduct.name,
-    upc: walmartProduct.upc,
-    visuals: Array.from(visuals),
-    msrp: walmartProduct.salePrice,
-    suggestedPrice: Math.round(walmartProduct.salePrice * 0.8),
-    description: walmartProduct.shortDescription,
-    variationLabel: variantLabel,
-    walmartId: walmartProduct.itemId,
-    variants: []
-  }
-}
-
-const getWalmartItemVariantLabel = (walmartProduct: any) => {
-  const labelList: string[] = []
-  if (walmartProduct.size && walmartProduct.size !== '') labelList.push(walmartProduct.size)
-  if (walmartProduct.color && walmartProduct.color !== '') labelList.push(walmartProduct.color)
-  return labelList.join(' ')
 }
