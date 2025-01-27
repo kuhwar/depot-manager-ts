@@ -54,6 +54,24 @@ export const searchByUpc = (upcs: string[]): Promise<WalmartProduct[]> => {
   })
 }
 
+export const searchByQuery = (q: string, take:number, skip:number): Promise<WalmartProduct[]> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const headers = getWalmartHeaders()
+      const filters: string[] = []
+      filters.push(`query=${encodeURIComponent(q)}`)
+      filters.push(`numItems=${take}`)
+      if (skip > 0) {
+        filters.push(`start=${skip}`)
+      }
+      const url = 'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?' + filters.join('&')
+      const response  = await axios.get(url, { headers })
+      resolve(response.data.items.map(normalizeWalmartProduct))
+    } catch (e: any) {
+      reject(e)
+    }
+  })
+}
 
 export const generateManifestId = () => {
   const idLength = 5

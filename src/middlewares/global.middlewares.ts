@@ -4,7 +4,7 @@ import prisma from '../configurations/prisma'
 import crypto from 'crypto'
 import axios from 'axios'
 import {WalmartProduct} from "../types/WalmartProduct";
-import {searchById, searchByUpc} from "../configurations/walmart";
+import {searchById} from "../configurations/walmart";
 
 const hostCacheExpirationSeconds = parseInt(process.env.HOST_CACHE_EXPIRATION_SECONDS ?? '1800')
 // Note to future myself: We can migrate this host cache to REDIS
@@ -56,7 +56,7 @@ export const walmartLookupById = async (req: Request, res: Response, next: NextF
 
 export const walmartLookupByQuery = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!res.locals.pageData.q || typeof res.locals.pageData.q !== 'string' || res.locals.pageData.q === '') return
+    if (!res.locals.pageData.q || res.locals.pageData.q === '') return
     const walmartRequestHeaders = getWalmartHeaders()
     const filters: string[] = []
     filters.push(`query=${encodeURIComponent(res.locals.pageData.q)}`)
@@ -134,6 +134,16 @@ export const renderNotFound = (req: Request, res: Response) => {
     res.status(404).render('404', { layout: "" })
   } else {
     res.status(404).send({})
+  }
+}
+
+export const setAdminLayout = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.locals.layout = 'admin'
+  } catch (e: any) {
+    res.locals.errors.push(e.message ?? e.toString())
+  } finally {
+    res.locals.errors.length !== 0 ? res.render('404', {layout: ''}) : next()
   }
 }
 
