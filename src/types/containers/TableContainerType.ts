@@ -7,5 +7,5 @@ export type TableContainerType = {
     property:string
     width: undefined | number
   }[],
-  data:any
+  data:any[]
 }

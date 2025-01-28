@@ -3,7 +3,8 @@ import { parse as parseCsv } from 'csv-string'
 import { addMissingCheckDigit, generateManifestId, searchByUpc } from '../../configurations/walmart'
 import prisma from '../../configurations/prisma'
 
-export const listManifests = (req: Request, res: Response) => {
+export const listManifests = async (req: Request, res: Response) => {
+  const manifests = await prisma.manifest.findMany({take:12, orderBy:{createdAt:"desc"}})
   res.render('admin/manifests')
 }
 
@@ -33,7 +34,7 @@ export const saveManifest = async (req: Request, res: Response) => {
       data: {
         id: generateManifestId(),
         cost: Number(req.body.cost),
-        totalValue: csvData.reduce((previousValue, currentValue) => previousValue + Number(currentValue["Ext. Retail"]), 0),
+        totalValue: Math.round(csvData.reduce((previousValue, currentValue) => previousValue + Number(currentValue["Ext. Retail"]), 0)*100)/100,
         fileName: fileName,
         fileContent: csvContent,
         items: {
