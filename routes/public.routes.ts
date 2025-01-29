@@ -1,6 +1,6 @@
 import { Router} from 'express'
-import {homeController, viewProductController} from '../middlewares/public.controllers'
-import {populatePagination} from "../middlewares/global.middlewares";
+import {homeController, viewProductController} from '../controllers/public.controllers'
+import {populatePagination} from "../controllers/global.middlewares";
 
 const router = Router()
 

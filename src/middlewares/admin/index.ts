@@ -1,7 +1,0 @@
-export * from "./manifests"
-export * from "./products"
-export * from "./sales"
-export * from "./posts"
-export * from "./workers"
-export * from "./settings"
-export * from "./reports"

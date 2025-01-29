@@ -56,7 +56,7 @@ export const saveProduct = async (req: Request, res: Response) => {
         }
       })
     }
-    res.redirect(`/admin/products/${existingProduct.id}`)
+    res.redirect(`/admin/products`)
   } catch (e: any) {
     res.locals.errors.push(e.message)
     res.render('admin/products/create')
