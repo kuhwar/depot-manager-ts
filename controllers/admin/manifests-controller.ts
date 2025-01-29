@@ -4,7 +4,7 @@ import { addMissingCheckDigit, generateManifestId, searchByUpc } from '../../con
 import prisma from '../../configurations/prisma'
 
 export const listManifests = async (req: Request, res: Response) => {
-  const manifests = await prisma.manifest.findMany({take:12, orderBy:{createdAt:"desc"}})
+  res.locals.manifests = await prisma.manifest.findMany({take:12, orderBy:{createdAt:"desc"}})
   res.render('admin/manifests')
 }
 

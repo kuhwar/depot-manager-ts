@@ -3,7 +3,7 @@ import prisma from "../../configurations/prisma";
 import {categories} from "../../configurations/cache";
 import {searchByQuery} from "../../configurations/walmart";
 
-export const listProducts = async (req: Request, res: Response) => {
+export const list = async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
     where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}, name: {search: res.locals.pageData.q}},
     include: {items: {where: {isDeleted: false}, include: {shelf: true}}},
@@ -14,7 +14,7 @@ export const listProducts = async (req: Request, res: Response) => {
   res.render('admin/products')
 }
 
-export const createProduct = async (req: Request, res: Response) => {
+export const create = async (req: Request, res: Response) => {
   try {
     res.locals.categories = categories
   } catch (e: any) {
@@ -24,7 +24,7 @@ export const createProduct = async (req: Request, res: Response) => {
   }
 }
 
-export const saveProduct = async (req: Request, res: Response) => {
+export const save = async (req: Request, res: Response) => {
   try {
     let existingProduct = await prisma.product.findFirst({where: {depotId: res.locals.depot.id, walmartId: req.body.walmartId}})
     if (existingProduct) {
@@ -63,11 +63,11 @@ export const saveProduct = async (req: Request, res: Response) => {
   }
 }
 
-export const showProduct = (req: Request, res: Response) => {
+export const view = (req: Request, res: Response) => {
   res.render('admin/view-product')
 }
 
-export const lookupProducts = async (req: Request, res: Response) => {
+export const catalogLookup = async (req: Request, res: Response) => {
   try{
     if (!res.locals.pageData.q || res.locals.pageData.q === '') return
     res.locals.walmartProducts = await searchByQuery(res.locals.pageData.q, res.locals.pageData.take, res.locals.pageData.skip)
