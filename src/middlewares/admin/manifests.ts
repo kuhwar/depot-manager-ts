@@ -60,3 +60,7 @@ export const saveManifest = async (req: Request, res: Response) => {
     res.redirect('#')
   }
 }
+
+export const showManifest = async (req: Request, res: Response)=>{
+
+}

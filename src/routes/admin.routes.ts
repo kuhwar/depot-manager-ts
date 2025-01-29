@@ -9,7 +9,7 @@ import {
   saveProduct,
   indexSalesController,
   indexPostsController,
-  indexWorkersController, indexSettingsController, showReports, showProduct, lookupProducts
+  indexWorkersController, indexSettingsController, showReports, showProduct, lookupProducts, showManifest
 } from '../middlewares/admin'
 
 const router = Router();
@@ -28,7 +28,7 @@ router.get  ('/sales', indexSalesController)
 
 router.get  ('/manifests', listManifests)
 router.post ('/manifests', saveManifest)
-// router.post('/manifests/:id', viewManifestController)
+router.post ('/manifests/:id', showManifest)
 
 router.get  ('/posts', indexPostsController)
 
