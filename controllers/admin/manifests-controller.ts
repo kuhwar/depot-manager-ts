@@ -62,5 +62,12 @@ export const saveManifest = async (req: Request, res: Response) => {
 }
 
 export const showManifest = async (req: Request, res: Response)=>{
-
+  try {
+    const id = req.params.id
+    res.locals.manifest = await prisma.manifest.findUnique({where:{id:id}, include:{items: true}})
+  } catch (e:any) {
+    res.locals.errors.push(e.message ?? e.toString())
+  } finally {
+    res.render("admin/manifests/show")
+  }
 }

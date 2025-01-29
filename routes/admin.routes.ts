@@ -26,7 +26,7 @@ router.get  ('/sales', salesController.indexSalesController)
 
 router.get  ('/manifests', manifestsController.listManifests)
 router.post ('/manifests', manifestsController.saveManifest)
-router.post ('/manifests/:id', manifestsController.showManifest)
+router.get  ('/manifests/:id', manifestsController.showManifest)
 
 router.get  ('/posts', postsController.indexPostsController)
 
