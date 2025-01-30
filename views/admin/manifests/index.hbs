@@ -13,9 +13,9 @@
       </div>
     </form>
   </div>
-  <table class="w-full rounded-lg overflow-hidden">
+  <table class="w-full rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
     <thead>
-      <tr class="bg:gray-200 dark:bg-gray-800 text-center font-bold">
+      <tr class="bg-gray-300 dark:bg-gray-800 text-center font-bold">
         <th class="py-2">Id</th>
         <th>File</th>
         <th>Value</th>
@@ -23,10 +23,10 @@
     </thead>
     <tbody>
     {{#each manifests}}
-      <tr onclick="location.href = '/admin/manifests/{{this.id}}'">
-        <td class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{this.id}}</td>
-        <td class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{this.fileName}}</td>
-        <td class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{currency this.totalValue 2}}</td>
+      <tr onclick="location.href = '/admin/manifests/{{this.id}}'" class="cursor-pointer hover:underline">
+        <td class="px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{this.id}}</td>
+        <td class="px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{this.fileName}}</td>
+        <td class="px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{currency this.totalValue 2}}</td>
       </tr>
     {{/each}}
 
