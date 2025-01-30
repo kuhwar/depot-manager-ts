@@ -23,7 +23,7 @@
     </thead>
     <tbody>
     {{#each manifests}}
-      <tr>
+      <tr onclick="location.href = '/admin/manifests/{{this.id}}'">
         <td class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{this.id}}</td>
         <td class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{this.fileName}}</td>
         <td class="bg:gray-300 dark:bg-gray-700 px-3 py-2 overflow-ellipsis text-nowrap overflow-hidden">{{currency this.totalValue 2}}</td>
