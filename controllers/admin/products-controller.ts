@@ -17,6 +17,12 @@ export const list = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
   try {
     res.locals.categories = categories
+
+    if(req.params.walmartId && req.params.walmartId !== ""){
+      res.locals.product = await prisma.product.findFirst({where:{walmartId: req.params.walmartId}})
+    }
+
+
   } catch (e: any) {
     res.locals.errors = [e.message]
   } finally {
