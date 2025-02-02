@@ -11,7 +11,7 @@
     "build:ts": "npx tsc",
     "build": "npm run build:ts && npm run build:tw && node dist/index.js",
     "start:tw": "npx postcss tailwind.css -o public/styles/style.css -w",
-    "start:ts": "npx ts-node-dev ./src/index.ts",
+    "start:ts": "npx ts-node-dev index.ts",
     "prisma:deploy": "npx prisma migrate deploy",
     "prisma:create": "npx prisma migrate dev --create-only",
     "prepare:localdb": "docker run --name dev-mariadb --detach --volume c:/Users/harun/Docker/mariadb:/var/lib/mysql --env MYSQL_ROOT_PASSWORD=keloglan --publish 3306:3306 --restart always  mariadb:10.6",

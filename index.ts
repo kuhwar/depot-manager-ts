@@ -7,7 +7,7 @@ import authenticationRoutes from './routes/authentication.routes';
 import adminRoutes from './routes/admin.routes';
 import passport from './configurations/passport';
 import handlebars from './configurations/handlebars';
-import {renderNotFound, validateHost} from "./middlewares/global.middlewares";
+import {renderNotFound, validateHost} from "./controllers/global.middlewares";
 
 // set up view engine
 app.engine('hbs', handlebars.engine);
@@ -17,7 +17,7 @@ app.set("view engine", "hbs");
 app.use(passport.initialize());
 app.use(passport.session());
 
-// routes and middlewares
+// routes and controllers
 app.use(validateHost);
 app.use("/", publicRoutes);
 app.use("/auth", authenticationRoutes);

@@ -1,0 +1,9 @@
+<div class="p-2 overflow-hidden rounded-md flex flex-col gap-2 border-2 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
+  <img class="rounded-t-md object-cover aspect-square bg-white" alt="{{name}}" src="{{coverImage}}?odnHeight=180&odnWidth=180&odnBg=ffffff"/>
+  <span class="text-sm px-2 flex-1 line-clamp-2">{{name}}</span>
+  <div class="flex items-center gap-x-2">
+    <p class="px-2 py-1 text-xs">{{variationLabel}}</p>
+    <p class="px-2 py-1 ms-auto text-xs text-slate-100 rounded-lg bg-orange-900">{{currency price 0}}</p>
+  </div>
+  <a class="w-full flex p-1 items-center justify-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600" href="{{this.action}}">{{callToAction}}</a>
+</div>

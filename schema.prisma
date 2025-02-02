@@ -130,11 +130,12 @@ model Item {
   soldAt DateTime? @map("sold_at")
 
   // Foreign Keeys
-  product      Product       @relation(fields: [productId], references: [id])
-  productId    Int           @map("product_id")
-  shelf        Shelf         @relation(fields: [shelfId], references: [id])
-  shelfId      Int           @map("shelf_id")
-  manifestItem ManifestItem?
+  product        Product       @relation(fields: [productId], references: [id])
+  productId      Int           @map("product_id")
+  shelf          Shelf         @relation(fields: [shelfId], references: [id])
+  shelfId        Int           @map("shelf_id")
+  manifestItem   ManifestItem? @relation(fields: [manifestItemId], references: [id])
+  manifestItemId Int?          @unique @map("manifest_item_id")
 
   @@map("items")
 }
@@ -183,9 +184,9 @@ model ManifestItem {
   visual    String  @default("/default-product.png") @db.MediumText
   walmartId String? @map("walmart_id")
 
+  item Item?
+
   // Foreign Keeys
-  item       Item?    @relation(fields: [itemId], references: [id])
-  itemId     Int?     @unique @map("item_id")
   manifest   Manifest @relation(fields: [manifestId], references: [id])
   manifestId String   @map("manifest_id") @db.Char(5)
 

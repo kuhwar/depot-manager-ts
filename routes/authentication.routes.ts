@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {googleAuthenticatorCallbackController, googleAuthenticatorController, logoutController, loginController} from "../middlewares/authentication.middlewares";
+import {googleAuthenticatorCallbackController, googleAuthenticatorController, logoutController, loginController} from "../controllers/authentication.middlewares";
 const router = Router();
 
 router.get('/login',loginController)

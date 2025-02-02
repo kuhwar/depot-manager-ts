@@ -4,7 +4,7 @@ import { addMissingCheckDigit, generateManifestId, searchByUpc } from '../../con
 import prisma from '../../configurations/prisma'
 
 export const listManifests = async (req: Request, res: Response) => {
-  const manifests = await prisma.manifest.findMany({take:12, orderBy:{createdAt:"desc"}})
+  res.locals.manifests = await prisma.manifest.findMany({take:12, orderBy:{createdAt:"desc"}})
   res.render('admin/manifests')
 }
 
@@ -62,5 +62,20 @@ export const saveManifest = async (req: Request, res: Response) => {
 }
 
 export const showManifest = async (req: Request, res: Response)=>{
-
+  try {
+    const id = req.params.id
+    res.locals.manifest = await prisma.manifest.findUnique({where:{id:id}, include:{items: true}})
+    res.locals.manifest.items = res.locals.manifest.items.map((item:any) => {return {
+      id: item.id,
+      name: item.name,
+      upc: item.upc,
+      price: item.price,
+      visual: item.visual,
+      action: `/admin/products/create?walmartId=${item.walmartId??""}&manifestItemId=${item.id}`
+    }})
+  } catch (e:any) {
+    res.locals.errors.push(e.message ?? e.toString())
+  } finally {
+    res.render("admin/manifests/show")
+  }
 }

@@ -1,6 +1,6 @@
 <div class="flex flex-col items-center justify-center w-full rounded-md overflow-hidden">
-  <div class="w-full text-center bg:gray-200 dark:bg-gray-800 px-3 py-2 font-bold">{{graphData.title}}</div>
-  <svg viewBox="-10 -10 190 120" class="w-full bg:gray-300 dark:bg-gray-700">
+  <div class="w-full text-center bg-gray-300 dark:bg-gray-800 px-3 py-2 font-bold">{{graphData.title}}</div>
+  <svg viewBox="-10 -10 190 120" class="w-full bg-gray-200 dark:bg-gray-700">
     <g transform="translate(0, 100) scale({{graphData.xScale}},{{graphData.yScale}})">
       {{#each graphData.dataSeries}}
         <g stroke="{{this.color}}">
@@ -12,12 +12,12 @@
     </g>
     {{#each graphData.dataSeries}}
       <line x1="110" y1="{{@index}}0" x2="120" y2="{{@index}}0" stroke="{{this.color}}"  stroke-linejoin="round" transform="translate(0, 5)" />
-      <text x="125" y="{{@index}}0" font-size="8px" transform="translate(0, 8)" class="fill-white">{{this.name}}</text>
+      <text x="125" y="{{@index}}0" font-size="8px" transform="translate(0, 8)" class="fill-gray-900 dark:fill-gray-300">{{this.name}}</text>
     {{/each}}
 
-    <text id="valueDisplay" x="125" y="90" font-size="8px" transform="translate(0, 8)" class="fill-white"></text>
-    <line x1="0" y1="0" x2="00" y2="100" stroke="lime" class="stroke-gray-500"></line>
-    <line x1="0" y1="100" x2="100" y2="100" stroke="lime" class="stroke-gray-500"></line>
+    <text id="valueDisplay" x="125" y="90" font-size="8px" transform="translate(0, 8)" class="fill-gray-900 dark:fill-gray-300"></text>
+    <line x1="0" y1="0" x2="00" y2="100" class="stroke-gray-500"></line>
+    <line x1="0" y1="100" x2="100" y2="100" class="stroke-gray-500"></line>
   </svg>
 </div>
 

@@ -1,0 +1,11 @@
+<div class="flex flex-col justify-stretch gap-6">
+  <div class="flex items-center">
+    <div class="text-lg ">Manifest {{manifest.id}}</div>
+    <div class="ms-auto">{{currency manifest.totalValue 2}}</div>
+  </div>
+  <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
+    {{#each manifest.items}}
+      {{>containers/product-card name=this.name variationLabel=this.upc price=this.price coverImage=this.visual action=this.action callToAction="Add"}}
+    {{/each}}
+  </div>
+</div>

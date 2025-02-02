@@ -20,8 +20,8 @@ declare global {
         hasNext:boolean
       },
       depot:Depot,
-      product: Product
-      products: Product[]
+      product: Product | null
+      products: Product[] | null
     }
   }
 }

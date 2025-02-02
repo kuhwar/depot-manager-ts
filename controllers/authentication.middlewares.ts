@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
-import passport from "passport";
+import passport from "../configurations/passport";
 
 export const loginController = (req: Request, res: Response) => {
   res.render("auth/login", {layout: "auth"})
@@ -22,5 +22,5 @@ export const googleAuthenticatorController = passport.authenticate('google', {sc
 
 export const googleAuthenticatorCallbackController = passport.authenticate('google', {
   failureRedirect: '/auth/login',
-  successRedirect: '/admin',
+  successRedirect: '/admin'
 })
