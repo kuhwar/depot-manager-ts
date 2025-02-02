@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import prisma from "../../configurations/prisma";
 import {categories} from "../../configurations/cache";
-import {searchByQuery} from "../../configurations/walmart";
+import {searchById, searchByQuery} from "../../configurations/walmart";
 
 export const list = async (req: Request, res: Response) => {
   res.locals.products = await prisma.product.findMany({
@@ -17,12 +17,14 @@ export const list = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
   try {
     res.locals.categories = categories
-
-    if(req.params.walmartId && req.params.walmartId !== ""){
-      res.locals.product = await prisma.product.findFirst({where:{walmartId: req.params.walmartId}})
+    if (typeof req.query.walmartId === 'string' && /^\d{4,11}$/.test(req.query.walmartId)) {
+      res.locals.product = await prisma.product.findFirst({where:{walmartId: req.query.walmartId}})
+      const productsFound = await searchById([req.query.walmartId])
+      if(productsFound.length === 0) {res.locals.errors.push('no products found with walmartId: ' + req.query.walmartId); return;}
+      const walmartProduct = productsFound[0]
+      const ids = walmartProduct.variants.map(v=>v.id.toString())
+      res.locals.variants = (await searchById(ids)).map(v => {return {id: v.walmartId, name:v.variationLabel, selected: walmartProduct.walmartId === v.walmartId, title:v.name}})
     }
-
-
   } catch (e: any) {
     res.locals.errors = [e.message]
   } finally {

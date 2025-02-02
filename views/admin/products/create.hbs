@@ -3,23 +3,23 @@
   <form action="/admin/products/create/lookup" method="get" class="flex items-center justify-stretch gap-4 border-b-2 border-gray-500 pb-4">
     {{>inputs/text label="Search Walmart" value="" required=true name="q"}}
   </form>
-  <form action="/admin/products" method="post" class="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-    <input type="hidden" name="upc" value="{{walmartProduct.upc}}"/>
-    <input type="hidden" name="walmartId" value="{{walmartProduct.walmartId}}"/>
+  <form action="" method="post" class="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+    <input type="hidden" name="upc" value="{{product.upc}}"/>
+    <input type="hidden" name="walmartId" value="{{product.walmartId}}"/>
     <div class="sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 2xl:col-span-6">
-      {{>inputs/text label="Name" required=true pattern="^.{3,99}$" value=walmartProduct.name name="name"}}
+      {{>inputs/text label="Name" required=true pattern="^.{3,99}$" value=product.name name="name"}}
     </div>
-    {{#if walmartProduct.variants.length}}
-      {{>inputs/select label="Variant" options=walmartProduct.variants name="variant"}}
+    {{#if variants}}
+      {{>inputs/select label="Variant" options=variants name="variant"}}
     {{/if}}
-    {{>inputs/text label="Variation Label" required=false value=walmartProduct.variationLabel name="variationLabel"}}
-    {{>inputs/number label="Price" required=true value=walmartProduct.suggestedPrice name="price" sign="$"}}
+    {{>inputs/text label="Variation Label" required=false value=product.variationLabel name="variationLabel"}}
+    {{>inputs/number label="Price" required=true value=product.price name="price" sign="$"}}
     {{>inputs/select label="Category" options=categories name="categoryId" required=true}}
     {{>inputs/select label="Shelf" options=availableShelves name="shelfId" required=true}}
     <div class="sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 2xl:col-span-6">
-      {{>inputs/textarea label="Description" value=walmartProduct.description name="description"}}
+      {{>inputs/textarea label="Description" value=product.description name="description"}}
     </div>
-    {{#each walmartProduct.visuals}}
+    {{#each product.visuals}}
       <label class="relative">
         <img src="{{this}}?odnHeight=200&odnWidth=200&odnBg=ffffff" alt="Product Image" class="aspect-square rounded-md w-full"/>
         <input type="checkbox" value="{{this}}" name="visuals[]" class="absolute top-2 right-2" checked/>

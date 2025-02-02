@@ -34,24 +34,6 @@ export const validateHost = async (req: Request, res: Response, next: NextFuncti
   }
 }
 
-export const walmartLookupById = async (req: Request, res: Response, next: NextFunction):Promise<void> => {
-  try {
-    if (!req.query.walmartId || typeof req.query.walmartId !== 'string') return
-    if (!/^\d{4,11}$/.test(req.query.walmartId)) { res.locals.errors.push('invalid walmartId: ' + req.query.walmartId); return}
-    const productsFound: WalmartProduct[] = await searchById([req.query.walmartId])
-    if(productsFound.length === 0) {res.locals.errors.push('no products found with walmartId: ' + req.query.walmartId); return;}
-    const walmartProduct:WalmartProduct = productsFound[0]
-    const ids = walmartProduct.variants.map(v=>v.id.toString())
-    const variants = await searchById(ids)
-    walmartProduct.variants = variants.map(v => {return {id: v.walmartId, name:v.variationLabel, selected: walmartProduct.walmartId === v.walmartId, title:v.name}})
-    res.locals.walmartProduct = walmartProduct
-  } catch (e: any) {
-    res.locals.errors.push(e.response?.data ?? e.message)
-  } finally {
-    next()
-  }
-}
-
 export const populatePagination = (req: Request, res: Response, next: NextFunction) => {
   try {
     const q = typeof req.query.q === 'string' && req.query.q !== '' ? req.query.q : undefined
