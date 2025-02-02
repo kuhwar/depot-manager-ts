@@ -47,8 +47,7 @@ export const saveManifest = async (req: Request, res: Response) => {
               quantity: Number(item["Qty"]),
               price: Number(item["Unit Retail"]),
               visual: apiProduct?.visuals[0],
-              walmartId: apiProduct?.walmartId,
-              itemId: null
+              walmartId: apiProduct?.walmartId
             }
           })
         }
@@ -57,7 +56,7 @@ export const saveManifest = async (req: Request, res: Response) => {
   } catch (e: any) {
     res.locals.errors.push(e.message)
   } finally {
-    res.redirect('#')
+    res.redirect("/admin/manifests")
   }
 }
 
