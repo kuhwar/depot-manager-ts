@@ -4,14 +4,19 @@ import {categories} from "../../configurations/cache";
 import {searchById, searchByQuery} from "../../configurations/walmart";
 
 export const list = async (req: Request, res: Response) => {
-  res.locals.products = await prisma.product.findMany({
-    where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}, name: {search: res.locals.pageData.q}},
-    include: {items: {where: {isDeleted: false}, include: {shelf: true}}},
-    take: res.locals.pageData.take,
-    skip: res.locals.pageData.skip
-  })
-  res.locals.pageData.hasNext = res.locals.products.length === res.locals.pageData.take
-  res.render('admin/products')
+  try {
+    res.locals.products = await prisma.product.findMany({
+      where: {depotId: res.locals.depot.id, items: {some: {isDeleted: false}}, name: {search: res.locals.pageData.q}},
+      include: {items: {where: {isDeleted: false}, include: {shelf: true}}},
+      take: res.locals.pageData.take,
+      skip: res.locals.pageData.skip
+    })
+    res.locals.pageData.hasNext = res.locals.products.length === res.locals.pageData.take
+  } catch (e: any) {
+    res.locals.errors.push(e.message ?? e)
+  } finally {
+    res.render('admin/products')
+  }
 }
 
 export const create = async (req: Request, res: Response) => {
@@ -26,7 +31,7 @@ export const create = async (req: Request, res: Response) => {
       res.locals.variants = (await searchById(ids)).map(v => {return {id: v.walmartId, name:v.variationLabel, selected: walmartProduct.walmartId === v.walmartId, title:v.name}})
     }
   } catch (e: any) {
-    res.locals.errors = [e.message]
+    res.locals.errors.push(e.message ?? e)
   } finally {
     res.render('admin/products/create')
   }
@@ -64,15 +69,25 @@ export const save = async (req: Request, res: Response) => {
         }
       })
     }
-    res.redirect(`/admin/products`)
+
   } catch (e: any) {
     res.locals.errors.push(e.message)
-    res.render('admin/products/create')
+  } finally {
+    if(res.locals.errors.length)
+      res.render('admin/products/create')
+    else
+      res.redirect(`/admin/products`)
   }
 }
 
 export const view = (req: Request, res: Response) => {
-  res.render('admin/view-product')
+  try {
+
+  } catch (e: any) {
+    res.locals.errors.push(e.message ?? e)
+  } finally {
+    res.render('admin/view-product')
+  }
 }
 
 export const catalogLookup = async (req: Request, res: Response) => {
@@ -80,8 +95,8 @@ export const catalogLookup = async (req: Request, res: Response) => {
     if (!res.locals.pageData.q || res.locals.pageData.q === '') return
     res.locals.walmartProducts = await searchByQuery(res.locals.pageData.q, res.locals.pageData.take, res.locals.pageData.skip)
     res.locals.pageData.hasNext = res.locals.walmartProducts.length === res.locals.pageData.take
-  } catch (e) {
-
+  } catch (e: any) {
+    res.locals.errors.push(e.message ?? e)
   } finally {
     res.render('admin/products/lookup')
   }

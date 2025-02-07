@@ -1,8 +1,6 @@
-import { NextFunction, Request, Response } from 'express'
-import { Depot, Shelf } from '@prisma/client'
+import {NextFunction, Request, Response} from 'express'
+import {Depot, Shelf} from '@prisma/client'
 import prisma from '../configurations/prisma'
-import {WalmartProduct} from "../types/WalmartProduct";
-import {searchById} from "../configurations/walmart";
 
 const hostCacheExpirationSeconds = parseInt(process.env.HOST_CACHE_EXPIRATION_SECONDS ?? '1800')
 // Note to future myself: We can migrate this host cache to REDIS
@@ -14,23 +12,28 @@ export const validateHost = async (req: Request, res: Response, next: NextFuncti
     res.locals.errors = []
     const hostName = req.hostname
     let currentHost = hostCache.get(hostName)
-
     if (!currentHost || currentHost.expiresAt < Date.now()) {
-      const freshHostInformationFromDb = await prisma.host.findUnique({ where: { name: hostName }, include: { depot: true } })
-      const availableShelves = freshHostInformationFromDb?.depot ? await prisma.shelf.findMany({ where: { depotId: freshHostInformationFromDb.depot.id } }) : []
-      currentHost = { expiresAt: Date.now() + (hostCacheExpirationSeconds * 1000), depot: freshHostInformationFromDb?.depot, availableShelves: availableShelves }
+      const freshHostInformationFromDb = await prisma.host.findUnique({where: {name: hostName}, include: {depot: true}})
+      const availableShelves = freshHostInformationFromDb?.depot ? await prisma.shelf.findMany({where: {depotId: freshHostInformationFromDb.depot.id}}) : []
+      currentHost = {
+        expiresAt: Date.now() + (hostCacheExpirationSeconds * 1000),
+        depot: freshHostInformationFromDb?.depot,
+        availableShelves: availableShelves
+      }
       hostCache.set(hostName, currentHost)
     }
+    if (!currentHost.depot) return res.locals.errors.push(`${hostName} does not exist`)
 
-    if (!currentHost.depot) {
-      throw new Error(hostName + ' does not exist')
-    }
     res.locals.depot = currentHost.depot
     res.locals.availableShelves = currentHost.availableShelves
-    next()
   } catch (e: any) {
-    res.locals.errors.push(e.message)
-    return res.status(404).render('404', { layout: false })
+    res.locals.errors.push(e.message ?? e)
+  } finally {
+    if (res.locals.errors.length) {
+      res.status(404).render('404', {layout: false})
+    } else {
+      next()
+    }
   }
 }
 
@@ -51,7 +54,7 @@ export const populatePagination = (req: Request, res: Response, next: NextFuncti
       orderDirection: orderDirection,
       previousSkip: previousSkip,
       nextSkip: nextSkip,
-      hasNext:false
+      hasNext: false
     }
   } catch (e: any) {
     res.locals.errors.push(e.response?.data ?? e.message)
@@ -62,7 +65,7 @@ export const populatePagination = (req: Request, res: Response, next: NextFuncti
 
 export const renderNotFound = (req: Request, res: Response) => {
   if (req.accepts('text/html')) {
-    res.status(404).render('404', { layout: "" })
+    res.status(404).render('404', {layout: false})
   } else {
     res.status(404).send({})
   }
@@ -74,6 +77,10 @@ export const setAdminLayout = (req: Request, res: Response, next: NextFunction) 
   } catch (e: any) {
     res.locals.errors.push(e.message ?? e.toString())
   } finally {
-    res.locals.errors.length !== 0 ? res.render('404', {layout: ''}) : next()
+    if (res.locals.errors.length) {
+      res.status(404).render('404', {layout: false})
+    } else {
+      next()
+    }
   }
 }
