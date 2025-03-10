@@ -25,4 +25,4 @@ app.use("/admin", adminRoutes);
 app.all("*", renderNotFound);
 
 // Start server
-app.listen(process.env.PORT, ()=>console.log("Express server listening port", process.env.PORT));
+app.listen(process.env.PORT, ()=>console.log("Express server listening port:", process.env.PORT));
